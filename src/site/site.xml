@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="MulTEx">
+  
+  <publishDate position="navigation-bottom" format="yyyy-MM-dd"/>
+  
+  <body>
+    <links> <!-- Obere Navi-Zeile -->
+      <item name="MulTEx" href="/index.html" />
+      <item name="Maven" href="http://maven.apache.org/"/>
+    </links>
+<!--
+    <menu name="Plexus">
+      <item name="Overview" href="/index.html" /> 
+    </menu>
+-->
+    <menu name="Overview">
+      <item name="Overview" href="overview.html"/>
+      <item name="User's Guide (HTML)" href="docbook/UserGuide.html"/>
+      <item name="User's Guide (PDF)" href="docbook/UserGuide.pdf"/>
+      <item name="Javadoc" href="apidocs/overview-summary.html"/>
+      <item name="Version History" href="apidocs/multex/package-summary.html#versionHistory"/>
+      <item name="Developer's Guide" href="docbook/DeveloperGuide.html"/>
+    </menu>
+
+    <menu name="German background papers">
+      <item name="Konzepte" href="Konzepte.pdf"/>
+      <item name="Vortragsfolien" href="Vortragsfolien.pdf"/>
+      <item name="Zentrales Ausnahmemelden" href="JavaMagazin-2007-11p23-27_KnabeHashemi.pdf"/>
+      <!-- Die NetObjectDays-URL klappt nicht mehr. 2010-06-11 
+      <item name="Der originale Konferenzbeitrag von 2000" href="http://www.old.netobjectdays.org/pdf/00/papers/ooss/knabe.pdf"/>
+      -->
+      <item name="Der originale Konferenzbeitrag von 2000" href="Konzepte-original.pdf"/>
+    </menu>
+
+    ${reports}
+  </body>
+</project>

@@ -1,0 +1,3 @@
+See the license at
+
+   http://www.gnu.org/licenses/lgpl.html

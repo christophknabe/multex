@@ -1,0 +1,256 @@
+<project 
+  xmlns="http://maven.apache.org/POM/4.0.0" 
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="
+    http://maven.apache.org/POM/4.0.0 
+    http://maven.apache.org/maven-v4_0_0.xsd
+  "
+>
+  <modelVersion>4.0.0</modelVersion>
+  
+  <!-- The Basics -->
+  <groupId>de.tfh-berlin.knabe</groupId>
+  <artifactId>multex</artifactId>
+  <!-- Indicate version as m.n-SNAPSHOT during development, and finally before release als m.n! -->
+  <version>8.2</version>
+  <!-- 8.2 was the last released version on 2009-10-22 -->
+  <!-- 8.1 was released on 2008-12-08 -->
+  <!-- 8.0 was released on 2008-01-11 -->
+  <!-- 7.3 was released on 2007-09-20 -->
+  <!-- Version 7.3 is intended to be upwards compatible with 7.2 with the only exception, that it requires a Java 5 platform. -->
+  <packaging>jar</packaging>
+  <dependencies>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>3.8.1</version>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+
+  <!-- Build Settings -->
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-source-plugin</artifactId>
+        <configuration>
+          <attach>true</attach>
+        </configuration>       
+        <executions>
+          <execution>
+            <goals>
+              <goal>jar</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <source>1.5</source>
+          <target>1.5</target>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>      
+        <executions>
+          <execution>
+            <goals>
+              <goal>jar</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-eclipse-plugin</artifactId>
+        <configuration>
+          <downloadSources>true</downloadSources>
+          <eclipse.useProjectReferences>false</eclipse.useProjectReferences>
+        </configuration>
+      </plugin>
+	  </plugins>
+  </build>
+  <reporting>
+    <plugins>
+	    <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>docbook-maven-plugin</artifactId>
+        <!--
+        <configuration>
+          <language>en</language>
+        </configuration> 
+        --> 
+	    </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-project-info-reports-plugin</artifactId>
+        <version>2.2</version> 
+      </plugin>
+      <plugin>
+        <artifactId>maven-surefire-report-plugin</artifactId>
+      </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>cobertura-maven-plugin</artifactId>
+        <version>2.0</version> 
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>  
+      </plugin>
+      
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>jdepend-maven-plugin</artifactId>
+        <!-- 
+        <version>2.0-beta-2</version>
+        -->
+      </plugin>
+
+    </plugins>
+  </reporting>
+
+  <!-- More Project Information -->
+  <name>The Multi-Tier Exception Handling Framework (MulTEx ${version})</name>
+  <description>MulTEx is a simple, but powerful framework for organizing exceptions
+    and messages is a multi-tier Java software system.
+
+    It offers the key features:
+  
+    Causal chains/trees as a means to capture low-level error information.
+  
+    Redundancy-free stack traces and message chains in the case of indirectly caused exceptions.
+  
+    Internationalized message texts and parameters for exceptions.
+  
+    Services for reporting an exception chain/tree onto streams and dialogs.
+  
+    A standard way for writing method bodies with regard to exceptions.
+  
+    A collection of utilities for centralized exception reporting.
+  </description>
+  <url>http://www.tfh-berlin.de/~knabe/java/multex/</url>
+  <inceptionYear>1998</inceptionYear>
+  <licenses>
+    <license>
+      <name>GNU Lesser General Public License, Version 3</name>
+      <url>http://www.gnu.org/licenses/lgpl.html</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
+  <organization>
+    <name>Technische Fachhochschule Berlin - University of Applied Sciences</name>
+    <url>http://www.tfh-berlin.de/</url>
+  </organization>
+  <developers>
+    <developer>
+      <name>Christoph Knabe</name>
+      <url>http://www.tfh-berlin.de/~knabe/</url>
+      <roles>
+        <role>architect</role>
+        <role>developer</role>
+      </roles>
+      <timezone>+1</timezone>
+    </developer>
+  </developers>
+  <scm>
+    <connection>not yet defined</connection>
+    <developerConnection>scm:svn:https://knabe@pcx22.tfh-berlin.de/work/svnroot/knabeTFH/Java/MulTEx/multex</developerConnection>
+    <tag>HEAD</tag>
+    <url>viewsvn not yet defined</url>
+  </scm>
+
+  <!-- Environment Settings -->
+  <pluginRepositories>
+    <pluginRepository>
+      <id>codehaus-snapshots</id>
+      <name>Maven Codehaus Snapshots</name>
+      <url>http://snapshots.repository.codehaus.org/</url>
+    </pluginRepository>
+  </pluginRepositories>
+  <profiles>
+    <!-- Include tools.jar of Sun JRE -->  
+    <profile>
+      <id>default-tools.jar</id>
+      <!-- Needed for the ExceptionMessagesDoclet, which collects the Javadoc texts of all exceptions to a .properties file. -->
+      <activation>
+        <property>
+          <name>java.vendor</name>
+          <value>Sun Microsystems Inc.</value>
+        </property>
+      </activation>
+      <dependencies>
+        <dependency>
+          <groupId>com.sun</groupId>
+          <artifactId>tools</artifactId>
+          <version>1.5</version>
+          <scope>system</scope>
+          <systemPath>${java.home}/../lib/tools.jar</systemPath>
+        </dependency>
+      </dependencies>
+    </profile>
+  </profiles>
+  
+  <distributionManagement>
+    <repository>
+      <id>tfh-hrz-knabe</id>
+      <name>HRZ-Repository of Knabe</name>
+      <!--
+      <url>scp://hrz.tfh-berlin.de/usr1/doz/knabe/homepage/public_html/mvn-repo/</url>
+      -->
+      <url>scp://compute.tfh-berlin.de/usr1/doz/knabe/homepage/public_html/mvn-repo/</url>
+    </repository>
+    <site>
+      <id>tfh-hrz-knabe</id>
+      <!--
+      <url>scp://hrz.tfh-berlin.de/usr1/doz/knabe/homepage/public_html/java/multex/snapshot/</url>
+      -->
+      <url>scp://compute.tfh-berlin.de/usr1/doz/knabe/homepage/public_html/java/multex/snapshot/</url>
+    </site>
+  </distributionManagement>
+
+
+</project>
+
+
+      <!-- Unnecessary: Has been used for site upload. Now it works well with the site:deploy target. 2007-07-11 
+      <plugin> 
+        <artifactId>maven-antrun-plugin</artifactId>
+        <executions>
+          <execution>
+            <phase>generate-sources</phase>
+            <configuration>
+              <tasks>
+                <echo message="Running ANT for deploying the site..."/>
+                <tar destfile="target/site.tgz" basedir="target/site" compression="gzip"/>
+                <scp file="target/site.tgz" todir="knabe@hrz.tfh-berlin.de:" password="xxx" verbose="true"/>
+                <sshexec host="hrz.tfh-berlin.de"
+                  username="knabe"
+                  password="xxx"
+                  command="mkdir -p testSite || exit; rm -Rf testSite/* || exit; cd testSite || exit; tar -xvf $HOME/site.tgz || exit"/>
+              </tasks>
+            </configuration>
+            <goals>
+              <goal>run</goal>
+            </goals>
+          </execution>
+        </executions>
+        <dependencies>
+          <dependency>
+            <groupId>ant</groupId>
+            <artifactId>ant-jsch</artifactId>
+            <version>1.6.5</version>
+          </dependency>
+          <dependency>
+            <groupId>com.jcraft</groupId>
+            <artifactId>jsch</artifactId>
+            <version>0.1.25</version>
+          </dependency>
+        </dependencies>
+      </plugin> 
+      antrun -->
+

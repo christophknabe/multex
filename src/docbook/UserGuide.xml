@@ -1,0 +1,859 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN"
+"http://www.oasis-open.org/docbook/xml/4.2/docbookx.dtd">
+<!-- Switch editor to "UTF-8" encoding, so umlaute etc. (e.g. "ÄÖÜ") will be displayed correctly -->
+<article lang="en">
+  <title>User's Guide for MulTEx - The Multi Tier Exception Handling
+  Framework</title>
+
+  <articleinfo>
+    <author>
+      <firstname>Christoph</firstname>
+
+      <surname>Knabe</surname>
+
+      <affiliation>
+        <shortaffil>TFH Berlin</shortaffil>
+
+        <orgname class="nonprofit">- University of Applied Sciences
+        -</orgname>
+      </affiliation>
+    </author>
+
+    <pubdate>2008-01-11</pubdate>
+  </articleinfo>
+
+  <para>The main goal of this user's guide is to tell, how to quickly
+  introduce robust and diagnostic exception handling and reporting into a Java
+  software system.</para>
+
+  <para>These hints are easier to follow, if you are writing a software system
+  from scratch, but can be applied onto existing software, as well.</para>
+
+  <para>You should introduce it according to these priorities:</para>
+
+  <orderedlist>
+    <listitem>
+      <para>introduce central exception reporting,</para>
+    </listitem>
+
+    <listitem>
+      <para>assure exception propagation to the highest possible level,</para>
+    </listitem>
+
+    <listitem>
+      <para>provide all exceptions with diagnostic parameters,</para>
+    </listitem>
+
+    <listitem>
+      <para>provide natural message texts for all execptions.</para>
+    </listitem>
+  </orderedlist>
+
+  <section>
+    <title>Introduce Central Exception Reporting</title>
+
+    <para>When you are using MulTEx, the main paradigm for error handling and
+    reporting are Java exceptions. Any misfunction will be passed to the
+    caller of a method by the standard Java means, an exception. This will be
+    propagated to the upmost level, where it still can be caught, in order to
+    report it. Handling of an individual exception should rarely be
+    necessary.</para>
+
+    <para>Depending on the type of user interface, there are different places,
+    where you can catch all propagated exceptions. Sometimes it is not simple
+    to find this place in the UI documentation. Sometimes you will not be able
+    to find it, and must use a workaround in order to assure central exception
+    reporting.</para>
+
+    <section>
+      <title>Reporting in Command Line Applications</title>
+
+      <para>In a Java application, invoked as a command line, you should
+      report, both the exception's messages, and its stack trace, as the
+      command line application typically does not have a button for requesting
+      the details of the stack trace. The destination for the exception
+      reporting usually will be <varname>System.err</varname>.</para>
+
+      <para>If you specify the main method as <programlisting>public static void main(final String[] i_args) throws Exception {...}</programlisting>you
+      will already have a centralized exception reporting, but the Java
+      Runtime system will report only the stack trace without giving nice
+      textual error messages.</para>
+
+      <para>In order to get the textual message chain, and the stack trace,
+      you must write your main method as follows: <programlisting>public static void main(final String[] i_args) {
+    ... //check and report argument violations
+    try{
+        _doTheWork(i_args);
+    }catch(final Exception e){
+        multex.Msg.printReport(e);
+    }
+}</programlisting>This will report to <varname>System.err</varname> the
+      exception chain messages using for localization the resource bundle
+      <filename>MsgText</filename> in the actual working directory, followed
+      by the stack trace. If you want to use another resource bundle for
+      localization, then use the variant <programlisting>printReport(StringBuffer, Throwable, ResourceBundle)</programlisting>instead,
+      and print out the filled <classname>StringBuffer</classname>,
+      afterwards.</para>
+
+      <!--End of Reporting in Command Line Applications-->
+    </section>
+
+    <section>
+      <title>Reporting in Swing Applications</title>
+
+      <para>In a Java Swing application, you should report all exceptions by a
+      variant of the static <methodname>multex.Swing.report</methodname>
+      methods. These report firstly a window with the messages of the
+      exception causal chain. Then pressing on the button
+      <command>Details</command> will expand the dialog and show the stack
+      trace of the exception chain, too.</para>
+
+      <para>Usually the variant of method
+      <methodname>multex.Swing.report</methodname> with an owner component
+      should be used, as it will block further input to the owner component or
+      its parent window, until the exception message dialog has been closed by
+      the user.</para>
+
+      <section>
+        <title>Centralized exception reporting using
+        javax.swing.AbstractAction</title>
+
+        <para>Using a simple variant of the <wordasword>template
+        method</wordasword> design pattern, you should write your own class,
+        e.g. <classname>UiAction</classname> as a subclass of
+        <classname>javax.swing.AbstractAction</classname>: <programlisting>public class UiAction extends javax.swing.AbstractAction {
+    final void actionPerformed(ActionEvent ev){
+        try{
+            actionPerformedWithThrows(ev);
+        }catch(Exception ex){
+            multex.Swing.report(ev.getSource(), ex);
+        }
+    }
+}          </programlisting>This class gets the UI component causing the
+        event, uses its parent chain to get the owner frame, and will block it
+        during exception reporting. When using <classname>UiAction</classname>
+        instead of <classname>javax.swing.AbstractAction</classname> you must
+        extend <classname>UiAction</classname> redefining the method
+        <methodname>actionPerformedWithThrows</methodname> instead of
+        <methodname>actionPerformed</methodname>.</para>
+
+        <para>See an example at the Central Exception Reporting Sample
+        Application, site <ulink
+        url="http://excrep.berlios.de/">http://excrep.berlios.de/</ulink></para>
+
+        <!--End of reporting using a swing.AbstractAction-->
+      </section>
+
+      <!--End of AbstractAction-->
+
+      <section>
+        <title>Last-resort exception reporting</title>
+
+        <para>In order to report all uncaught exceptions in a Swing
+        application, which occur during the execution of an UI-event-triggered
+        action, it is sufficient to install one central exception handler
+        using the undocumented system property
+        <varname>sun.awt.exception.handler</varname>, see more in a <ulink
+        url="http://www.jguru.com/faq/view.jsp?EID=427279">JGuru
+        discussion</ulink>.</para>
+
+        <para>This undocumented behaviour is wrapped by a MulTEx service. You
+        can implement the interface
+        <interfacename>multex.AwtExceptionHandler</interfacename>, and install
+        this class by the method
+        <methodname>multex.Awt.setAwtExceptionHandlerClass</methodname>. Then
+        any exception propagating up to the AWT/Swing event-dispatch thread
+        will be reported by the handler's method
+        <methodname>handle(Throwable)</methodname>. In this method you should
+        call a <methodname>multex.Swing.report</methodname> method.</para>
+
+        <para>In order to block input to the GUI application while reporting
+        an exception, it is necessary to locate the application's frame and
+        use it in the central exception handler's call to report(...) as the
+        <parameter>ownerHook</parameter>.</para>
+
+        <para>If an application has several frames, and it is not possible to
+        determine automatically, which UI component must be blocked during
+        exception reporting, then you should use an own
+        <classname>UiAction</classname> base class as was described
+        earlier.</para>
+
+        <para>Attention: Propagating an exception from the method
+        <methodname>actionPerformed</methodname> will leave Swing in a dirty
+        state. Sometimes the focus of a menu item will be highlighted in
+        another place, than where Swing assumes it to be. So you should on the
+        one hand install such a last-resort exception reporting, but
+        nevertheless you need an <classname>UiAction</classname> for reporting
+        exceptions in all user-triggered actions.</para>
+
+        <!--End of Last-resort in Swing-->
+      </section>
+
+      <!--End of Swing-->
+    </section>
+
+    <section>
+      <title>Reporting in JSP Applications</title>
+
+      <para>In a Java Server Pages application, you have several places, where
+      you should report exceptions. These include firstly a JSP error page,
+      which will be called by any unhandled exception. Secondly each JSP page
+      with an input form should contain an error message, if something went
+      wrong during execution of its action. Thirdly, depending on the UI
+      framework used, there is the possibility to report an exception near to
+      the form field, which caused it.</para>
+
+      <section>
+        <title>Last-resort exception reporting using an error page</title>
+
+        <para>In order to report all uncaught exceptions in a JSP/servlet
+        application, which occur during the execution of an UI-event-triggered
+        action, it is sufficient to install one central error page. See
+        section <wordasword>2.4.2 Request Time Processing Errors</wordasword>
+        of the Sun Java Server Pages Specification about this.</para>
+
+        <para>In Tomcat you can do this in the deployment descriptor
+        <filename>web.xml</filename> by an
+        <literal>&lt;error-page&gt;</literal> directive. E.g.:</para>
+
+        <programlisting>&lt;error-page&gt;
+    &lt;exception-type&gt;java.lang.Throwable&lt;/exception-type&gt;
+    &lt;location&gt;/system/errorPage.jsp&lt;/location&gt;
+&lt;/error-page&gt;</programlisting>
+
+        <para>This means, that any exception, including
+        <exceptionname>Throwable</exceptionname>, will be reported by
+        forwarding to the JSP page <filename>/system/errorPage.jsp</filename>.
+        The error page itself must be marked as such by setting the page
+        directive's <varname>isErrorPage</varname> attribute to
+        <constant>true</constant>, e.g.:</para>
+
+        <programlisting>&lt;%@page contentType="text/html" isErrorPage="true" %&gt;        </programlisting>
+
+        <para>In such an error page you should report not only the message
+        texts of the exception chain, but also it's stack trace and
+        diagnostically useful attributes of the request, session, and
+        application.</para>
+
+        <para>See an example at the Central Exception Reporting Sample
+        Application, site <ulink
+        url="http://excrep.berlios.de/">http://excrep.berlios.de/</ulink></para>
+
+        <!--End of error page-->
+      </section>
+
+      <section>
+        <title>Centralized exception reporting with Struts using
+        org.apache.struts.action.Action</title>
+
+        <para>In Struts 1.3.8 you have the possibility to define a central
+        exception handler using the
+        <function>&lt;global-exceptions&gt;</function> element of file
+        <filename>struts-config.xml</filename>. The central exception handler
+        class must implement the interface
+        <classname>org.apache.struts.action.ExceptionHandler</classname>. This
+        works very well and has access to the causing UI component.</para>
+
+        <para>A template method for the <methodname>execute</methodname>
+        methods you need only, if you want to handle other action related
+        issues centrally, e.g. transaction management.</para>
+
+        <para>See an example at the Central Exception Reporting Sample
+        Application, site <ulink
+        url="http://excrep.berlios.de/">http://excrep.berlios.de/</ulink></para>
+
+        <section>
+          <title>Form Field related Exception Reporting with Struts</title>
+
+          <para>One student group even implemented centralized exception
+          reporting for form field related exceptions. In Struts it is
+          possible to <methodname>saveErrors</methodname> or
+          <methodname>saveMessages</methodname> indicating the name of the
+          offending field of the form working on. This will place the message
+          in the appropriately marked position in the form.</para>
+
+          <para>In the central exception handler for Struts you can
+          specifically handle exceptions, which are related to a form field.
+          E.g. a <exceptionname>FieldvalueExc</exceptionname> could port the
+          identifier of the related field, so that
+          <classname>UiAction</classname> could put the exception message into
+          the good position.</para>
+
+          <para>Another idea is to find the place in Struts, where any
+          exception occurring in a <methodname>setXxx()</methodname> method of
+          a form bean can be caught and reported into the form near to the
+          field <varname>xxx</varname>.</para>
+
+          <!--End of Struts form field-->
+        </section>
+
+        <!--End of Struts-->
+      </section>
+
+      <section>
+        <title>Centralized exception reporting with Java Server Faces</title>
+
+        <para>Here is described the solution of the student project TriplePlay
+        in summer 2005.</para>
+
+        <para>The JavaServer Faces life cycle (see <ulink
+        url="http://java.sun.com/j2ee/1.4/docs/tutorial/doc/images/jsfIntro-lifecycle.gif">http://java.sun.com/j2ee/1.4/docs/tutorial/doc/images/jsfIntro-lifecycle.gif</ulink>)
+        is directed by an implementation of the interface
+        <interfacename>Lifecycle</interfacename> (in the package
+        <filename>javax.faces.lifecycle</filename>. The reference
+        implementation of Sun is
+        <classname>com.sun.faces.lifecycle.LifecycleImpl</classname>).</para>
+
+        <para>When the web application is started, a
+        <classname>LifecycleFactory</classname> (also in package
+        <filename>javax.faces.lifecycle</filename>, reference implementation
+        of Sun is
+        <classname>com.sun.faces.lifecycle.LifecycleFactoryImpl</classname>)
+        is asked to return a <interfacename>Lifecycle</interfacename> object.
+        Normally the standard implementation will be taken. But you have the
+        possibility to change the
+        <interfacename>LifecycleFactory</interfacename>, and to return your
+        own <interfacename>Lifecycle</interfacename> implementation.</para>
+
+        <para>In detail: Here are the two classes, which we have written. You
+        can subclass the reference implementation, or you can completely
+        implement the interface. We take the first approach.</para>
+
+        <programlisting>package myPackage; //MyLifecycleFactoryImpl.java
+  
+import javax.faces.FacesException;
+import javax.faces.lifecycle.Lifecycle;
+
+public class MyLifecycleFactoryImpl 
+extends com.sun.faces.lifecycle.LifecycleFactoryImpl 
+{
+
+  public Lifecycle getLifecycle(final String i_lifecycleId) 
+  throws FacesException 
+  {
+    return new MyLifecycleImpl();
+  }
+
+}
+
+/////////////////////////////////////////////////////////////////////
+package myPackage; //MyLifecycleImpl.java 
+
+import javax.faces.FacesException;
+import javax.faces.context.FacesContext;
+
+public class MyLifecycleImpl extends com.sun.faces.lifecycle.LifecycleImpl {
+
+  public void execute(final FacesContext io_facesContext) {
+    try {
+      super.execute(io_facesContext);
+    } catch(final FacesException e) {
+      // handleExceptions here
+    }
+  }
+
+}      </programlisting>
+
+        <para>Now we still have to instruct JavaServer Faces, that we want to
+        use our own <classname>LifecycleFactory</classname> implementation
+        instead of the default implementation. This we have to do in the file
+        <filename>faces-config.xml</filename> (a configuration file similar to
+        <filename>struts-config.xml</filename>).</para>
+
+        <programlisting>&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+
+&lt;!DOCTYPE faces-config PUBLIC
+           "-//Sun Microsystems, Inc.//DTD JavaServer Faces Config 1.0//EN"
+           "http://java.sun.com/dtd/web-facesconfig_1_0.dtd"&gt;
+
+&lt;faces-config&gt;
+       ...
+  &lt;factory&gt;
+    &lt;lifecycle-factory&gt;myPackage.MyLifecycleFactoryImpl&lt;/lifecycle-factory&gt;
+  &lt;/factory&gt;
+       ...
+&lt;/faces-config&gt;        </programlisting>
+
+        <para>Having done this, our implementation of the
+        <interfacename>LifecycleFactory</interfacename> will be used, which in
+        turn will deliver in the method <methodname>getLifecycle</methodname>
+        (see before) our own <interfacename>Lifecycle</interfacename>
+        implementation.</para>
+
+        <para>If there remain questions, I will try to answer them. You can
+        mention my addresses in this little howto, so that future students can
+        ask me, if necessary.</para>
+
+        <para>Siamak Haschemi, <ulink
+        url="http://www.haschemi.org">www.haschemi.org</ulink> E-Mail: info
+        (at) haschemi.org,</para>
+
+        <!--End of Java Server Faces-->
+      </section>
+
+      <!--End of JSP-->
+    </section>
+
+    <section>
+      <title>Reporting in background threads</title>
+
+      <para>If the <methodname>run()</methodname> method of a thread
+      terminates due to an uncaught exception, then by default, this thread
+      will die and the stack trace of this exception will be printed to
+      <varname>System.err</varname>.</para>
+
+      <para>This default behaviour is not satisfactory. At first, we would
+      like to see the exception message chain, too. And secondly, we would
+      really like to see it in the application's user interface, instead of in
+      a may-be suppressed console output.</para>
+
+      <section>
+        <title>Last-resort Exception Reporting</title>
+
+        <para>In order to report all uncaught exceptions of all background
+        threads, you must place all the threads in your own
+        <classname>ThreadGroup</classname>. For this
+        <classname>ThreadGroup</classname> you redefine the
+        method:<programlisting>void uncaughtException(Thread t, Throwable e)</programlisting>In
+        this method you can report the exception chain in the format, and to
+        the destination, you want. You should try to report to the user
+        interface (UI), if the thread was created or started by an UI event,
+        e.g. if it implements an action, which would last too long for the
+        user to await its completion.</para>
+
+        <para>Since Java 5 there is also such a possibility without the
+        necessity to create thread groups. The method <programlisting>public static void setDefaultUncaughtExceptionHandler(
+  Thread.UncaughtExceptionHandler eh
+)</programlisting>installs a last-resort exception handler for all thread
+        groups together.</para>
+
+        <!--End of Last-resort Exception Reporting-->
+      </section>
+
+      <section>
+        <title>Exception Reporting in long-living threads</title>
+
+        <para>But for a long-living thread, usually serving commands or alike,
+        and not triggered by a user action. we cannot tolerate to stop the
+        thread. Thus such a server thread should catch in its command loop in
+        the <methodname>run()</methodname> method any exception and report it
+        to a logging destination.</para>
+
+        <para>Also here it would be useful to inform the user, if any exists,
+        that a required service failed, and where is the appropriate
+        logfile.</para>
+
+        <!--End of Reporting in long-living threads-->
+      </section>
+
+      <!--End of Reporting in background threads-->
+    </section>
+
+    <!--End of Introduce central exception reporting-->
+  </section>
+
+  <section>
+    <title>How to introduce/use MulTEx in the API layers</title>
+
+    <para>The concepts behind MulTEx are described in german language in the
+    technical paper <filename>Konzepte.pdf</filename>.</para>
+
+    <para>Here are given more practical instructions.</para>
+
+    <section>
+      <title>What is a MulTEx exception?</title>
+
+      <para>A MulTEx exception is a highly diagnostic exception with a
+      parameterized, internationalizable message text pattern. In contrary the
+      standard <classname>Throwable</classname> of the Java platform does not
+      have an internationalizable message text, and has at most one parameter
+      of type <classname>String</classname>. MulTEx distinguishes between two
+      kinds of exception.</para>
+
+      <para>Subclasses of <classname>multex.Exc</classname> serve as business
+      rule exceptions, that is they serve for specifying and implementing the
+      <quote>negative</quote> business rules. In fact, a business rule
+      exception represents the negation of a precondition to a method. When
+      specifying a method, you should specify in its <keysym>throws</keysym>
+      clause all exceptions, which the method can guarantee to its
+      caller.</para>
+
+      <para>Subclasses of <classname>multex.Failure</classname> serve to
+      indicate to the caller an unexpected failure of a method. Typically they
+      contain a causing exception, which occured during the method execution.
+      Historically earlier than the JDK 1.4, MulTEx introduced the notion of a
+      causing exception, which in fact results in a chain of exceptions. As
+      this is especially useful in layered software architectures, MulTEx
+      received its name. Nowadays MulTEx even allows a
+      <classname>Collection</classname> of causing exceptions, thus spanning a
+      causal tree.</para>
+
+      <!--End of What is a MulTEx exception?-->
+    </section>
+
+    <section>
+      <title>How to declare a MulTEx exception with an internationalizable
+      message text pattern</title>
+
+      <para>The most comfortable way to get an internationalizable message
+      text pattern associated with each exception is the following, usable
+      from MulTEx version 7.1.</para>
+
+      <para>You define the message text pattern for each concrete subclass of
+      Throwable of which you have the source code. You place the text pattern
+      as the main comment into the Javadoc comment of the exception class
+      before any @tags. So the text pattern serves firstly as documentation
+      for this exception, and secondly as text pattern for
+      internationalization.</para>
+
+      <para>For example you could define an exception
+      <classname>CreditLimitExc</classname> with a message text pattern,
+      expecting two message parameters, as follows. <programlisting>package org.company.project;
+
+class Account {
+
+    ...
+    
+    /**Taking {0} units from your ac
+    * count will leave less than your credit limit {1} units on it.
+    */
+    public static final class CreditLimitExc extends multex.Exc {}
+    
+}        </programlisting></para>
+
+      <para>For <classname>Failure</classname>s there is no difference. You
+      only have to declare the exception as a subclass of
+      <classname>multex.Failure</classname>. For example in class
+      <classname>org.company.project.FileUtil</classname>:</para>
+
+      <para><programlisting>    /**Failure loading file {0} by user {1}*/
+    public static final class LoadFileFailure extends multex.Failure {}
+</programlisting>These exception declarations are so simple, as all diagnostic
+      information (causes and parameters) are stored in the MulTEx base class,
+      <classname>Exc</classname>, or <classname>Failure</classname>,
+      respectively. For ease of use they should be initialized using the
+      generic <methodname>create</methodname> method in the
+      <classname>MultexUtil</classname> class, rather than the
+      <methodname>init</methodname>-methods. So the concrete exception class
+      merely serves with its class name as a key to a message text resource
+      bundle.</para>
+
+      <section>
+        <title>Collecting the text patterns using the
+        <classname>ExceptionMessagesDoclet</classname></title>
+
+        <para>You can use the doclet
+        <classname>multex.tool.ExceptionMessagesDoclet</classname> to collect
+        all exception message text patterns from the exceptions. You must
+        specify the sources to scan as usually for a doclet. You must pass the
+        output <filename>.properties</filename> file name to the doclet option
+        <option>-out</option>.</para>
+
+        <para>By executing the doclet on the upper examples the following
+        property definitions will be appended to the given
+        <option>-out</option> file:<programlisting>org.company.project.Account$CreditLimitExc = Taking {0} units from your ac\
+ count will leave less than your creditLimit {1} units on it.
+org.company.project.FileUtil$LoadFileFailure = Failure loading file {0} by user {1}</programlisting></para>
+
+        <remark>As Javadoc removes white space at the end of each comment
+        line, and java.util.Properties.load ignores the \ indicating line
+        continuation and whitespace at the beginning of the next line, it is
+        somehow difficult to make continuation lines with an intuitive
+        spacing. You can either split the long message text inside of a word,
+        as e.g. the word account in the example was split, or you can insert a
+        Properties escape sequence for whitespace at the end of the line, e.g.
+        a \t or a \u0020.</remark>
+
+        <!--End of the ExceptionMessagesDoclet-->
+      </section>
+
+      <section>
+        <title>Example usage of the
+        <classname>ExceptionMessagesDoclet</classname> from ANT</title>
+
+        <para><programlisting>&lt;target name="exception" depends="compile" 
+    description="Collect all exception message texts in the fb6 software into one file"
+&gt;
+    
+    &lt;property name="ExceptionResourcesFile" 
+        value="${CLASS_DESTINATION}/ExceptionResources.properties"
+    /&gt;
+    &lt;echo file="${ExceptionResourcesFile}" append="false"&gt;
+    #Generated by ANT-Target _resources. Do not edit.
+multex.MsgText.causeMarker = Ursache: 
+    #From here are following the message texts for the exceptions in the software system.
+    #They are all collected from the main Javadoc texts of each exception declaration.
+&lt;/echo&gt;
+    &lt;javadoc
+        access="private"
+        classpathref="compile.classpath"
+        doclet="multex.tool.ExceptionMessagesDoclet"
+        docletpathref="compile.classpath"
+        source="1.5"
+        useexternalfile="yes"
+        encoding="ISO-8859-1"
+    &gt;
+        &lt;arg value="-out"/&gt; 
+        &lt;!--Message texts will be appended to this file.--&gt;
+        &lt;arg file="${ExceptionResourcesFile}"/&gt;
+        
+        &lt;!--All exceptions in all Java files in this directory will be processed.--&gt;
+        &lt;fileset dir="java"/&gt;
+    &lt;/javadoc&gt;
+&lt;/target&gt;</programlisting></para>
+
+        <para>The former example works as follows. The <command>echo</command>
+        element creates a file
+        <filename>ExceptionResources.properties</filename> with a string
+        resource for the key <constant>multex.MsgText.causeMarker</constant>.
+        This defines the german translation for the default cause marker
+        <token>CAUSE:</token>. Then the
+        <classname>multex.tool.ExceptionMessagesDoclet</classname> appends all
+        exception message text patterns for all exceptions declared in all
+        Java files in the directory <filename>java</filename> to the
+        <filename>.properties</filename> file.
+        The given encoding is used to interpret the Java source files.
+        For writing to the -out file always encoding ISO-8859-1 is used,
+        as <filename>.properties</filename> files must use it.
+        </para>
+
+        <!--End of Example usage of the ExceptionMessagesDoclet-->
+      </section>
+
+      <!--End of How to declare a MulTEx exception-->
+    </section>
+
+    <section>
+      <title>How to imlement negative business rules by throwing
+      Exc-objects</title>
+
+      <para>A method should usually perform its normal specified action. But
+      it often has cases, which are forbidden to be handled like this. In such
+      situations the method should throw an <classname>Exc</classname> object
+      of a specific subclass.</para>
+
+      <para>So typically the necessity for throwing an
+      <classname>Exc</classname> can be found out by testing a precondition.
+      You should test one precondition after another, always immediately
+      throwing a specific exception. It is understood, that these exceptions
+      should be specified in the <keysym>throws</keysym> clause of the method,
+      so that the programmer of the call can consider to change the call or to
+      make a handler for some of them. Here we complete the above example of
+      the bank account .</para>
+
+      <para><programlisting lang="Java">package org.company.project;
+import multex.Exc;
+import static multex.MultexUtil.create;
+
+class Account {
+
+    final static long creditLimit = -5000;
+    long balance = 0;
+    
+    /**Transfers the specified amount from this account 
+    * to the destination account.
+    * @throws CreditLimitExc the new balance of the account would become 
+    * less than the creditLimit.
+    */
+    public void transfer(final Account destination, final long amount)
+    throws CreditLimitExc 
+    {
+        //1. Checking for business rule violations:
+        final long newBalance = balance - amount;
+        if(newBalance &lt; creditLimit){
+            throw create(CreditLimitExc.class, amount, creditLimit);
+        }
+
+        //2. Performing modifications:
+        balance = newBalance;
+        destination.balance += amount; 
+    }
+    
+    /**Taking {0} units from your account\t
+    * will leave less than your credit limit {1} units on it.
+    */
+    public static final class CreditLimitExc extends Exc {}
+    
+}            </programlisting>Please note here, that for comfortably creating
+      a new parameterized exception object, as we cannot inherit parameterized
+      constructors in Java, we have to call the static generic factory method
+      <methodname>MultexUtil.create</methodname>, and pass the class of the
+      desired exception, along with its parameters.</para>
+
+      <!--End of How to imlement negative business rules-->
+    </section>
+
+    <section>
+      <title>How to implement exception chaining by throwing a Failure
+      object</title>
+
+      <para>There are some places, where it is recommended to catch an
+      exception, and to wrap it into a parameterized exception with its own
+      message text.</para>
+
+      <para>The first is, if the exception is a checked one, and you don't
+      want to specify it in the throws cause of your own method. Then the
+      compiler forces you to catch it. In the catch branch you shoud usually
+      wrap it.</para>
+
+      <para>The other is, even with an unchecked exception, if you want to add
+      abstraction-specific diagnostic parameters, or a message text.</para>
+
+      <para>We present here as an example the code for opening a serial port
+      by means of <filename>javax.comm</filename>, as was more detailedly
+      motivated in the german text <filename>Konzepte.pdf</filename>.</para>
+
+      <para><programlisting>package x;
+import multex.Exc;
+import multex.Failure;
+import static multex.MultexUtil.create;
+
+class SerialPort {
+
+    ...
+
+    /**Opens the serial port with the given name and the other communication parameters.*/
+    public void open( 
+        String portName, int baudRate, int databits, int stopbits, int parity 
+    ) throws NameExc, OpenFailure {
+        //1. Checking for business rule violations:
+        if(!portName.startsWith("COM")){ 
+            throw create(NameExc.class, portName); 
+        }
+
+        //2. Performing modifications:
+        try { 
+            this.portName = portName; 
+            final javax.comm.CommPortIdentifier portId 
+            = CommPortIdentifier.getPortIdentifier(portName); //NoSuchPortException
+            sp = (javax.comm.SerialPort)portId.open(null,0); //PortInUseException
+            sp.setSerialPortParams( baudRate, databits, stopbits, parity ); 
+            //UnsupportedCommOperationException
+            os = sp.getOutputStream(); //IOException
+            is = sp.getInputStream(); //IOException 
+        } catch (Exception e) { 
+            ... //free resources 
+            //wrap exception and parameterize:
+            throw create(OpenFailure.class, e, 
+                portName, baudRate, databits, stopbits, parity
+            ); 
+        } //catch
+    } //open
+
+    /**The serial port name {0} is not allowed.*/
+    public static final class NameExc extends Exc {}
+
+    /**Cannot open the serial port "{0}" with communication parameters portName
+    * ={1}, baudRate={2}, databits={3}, stopbits={4}, parity={5}
+    */
+    public static final class OpenFailure extends Failure {}
+
+} //SerialPort</programlisting>Here we have the typical case, that the whole
+      modification part of the method body is surrounded by a
+      <keysym>try</keysym>-block, in whose <keysym>catch</keysym>-branch we
+      catch any <classname>Exception</classname> and propagate it by throwing
+      a <classname>Failure</classname> encapsulating the original exception
+      aside with diagnostic parameters. The caught exceptions include the
+      checked exceptions <classname>NoSuchPortException</classname>,
+      <classname>PortInUseException</classname>,
+      <classname>UnsupportedCommOperationException</classname>, and
+      <classname>IOException</classname>, where commented and any other
+      subclass of <classname>java.lang.RuntimeException</classname>. You
+      always have to pass the causing exception to the first parameter of
+      <methodname>MultexUtil.create</methodname> after the failure's
+      class.</para>
+
+      <!--End of How to imlement exception chaining by throwing a Failure object-->
+    </section>
+
+    <section>
+      <title>How to cope with many Failure causes (list exceptions, exception
+      treeing)</title>
+
+      <para>There are some cases, when a Failure does not have only one cause.
+      This typically occurs, when processing a list of items, each of them
+      being necessary for the success of the complete operation.</para>
+
+      <para>For example we want to copy a list of files to a backup directory.
+      Only if we succeed to copy every file, the whole method can be
+      considered successfull.</para>
+
+      <para>The first approach is<programlisting>    /**Copies all files from directory sourceDir to directory destDir.*/
+    public static void copyFiles1(final File sourceDir, final File destDir){
+        try {
+            final File[] files = sourceDir.listFiles();
+            for(final File file: files){
+                copyOneFile(file, destDir);
+            }
+        } catch (Exception e) {
+            throw create(CopyFilesFailure1.class, sourceDir, destDir);
+        }
+    }</programlisting>This method succeeds only, if all files can be
+      successfully copied from the source directory to the destination
+      directory. The first failing copying of a single file will cause the
+      abrupt termination of the complete operation. The resulting
+      <exceptionname>CopyFilesFailure</exceptionname> exception will have as
+      cause only the exception of the first file copy failure.</para>
+
+      <para>Sometimes we need the exception of each failed single item. For
+      example a compiler always works like this. It collects error messages,
+      but goes on analyzing the source text. The compilation will fail, if
+      there is at least one error, but all errrors will be reported.</para>
+
+      <para>If we want our copy files example to handle errors like this, we
+      must collect the individual exceptions before creating the
+      <exceptionname>CopyFilesFailure2</exceptionname>. Then we can pass in
+      this collection to the polymorphic <type>Object[]</type> parameters.
+      This is best done by using the constructor
+      <methodname>Failure(String,Collection)</methodname> with a
+      <keysym>null</keysym> String. If we want to pass in normal message
+      parameters, too, as in our example <varname>sourceDir</varname> and
+      <varname>destDir</varname>, we should add them to the collection before
+      the exceptions. Then they have a fixed index for the message pattern.
+      The following example with an exception collection is a bit longer, but
+      gives much more diagnostic information.<programlisting>/**Copies all files from directory sourceDir to directory destDir.*/
+public static void copyFiles2(final File sourceDir, final File destDir){
+    final Collection&lt;Object&gt; parameters = new ArrayList&lt;Object&gt;();
+    parameters.add(sourceDir);
+    parameters.add(destDir);
+    final File[] files = sourceDir.listFiles();
+    for(final File file: files){
+        try {
+            copyOneFile(file, destDir);
+        } catch (Exception e) {
+            parameters.add(e);
+        }
+    }
+    if (parameters.size()&gt;=2) {
+        throw new CopyFilesFailure2(parameters);
+    }        
+}
+
+/**Failure copying files from directory {0} to directory {1}*/
+public static final class CopyFilesFailure2 extends Failure {
+    public CopyFilesFailure2(Collection i_parameters) {
+        super((String)null, i_parameters);
+    }
+}</programlisting></para>
+
+      <para>By the way, giving each exception the potential of a list of
+      causing exceptions, results in spanning a causal tree of exceptions. The
+      standard MulTEx services for printing an exception will express the
+      causal tree by indenting the lower exceptions by a + sign for each
+      level.</para>
+
+      <caution>
+        <para>The standard Java services for printing an exception
+        (<methodname>Throwable.toString()</methodname> and
+        <methodname>Throwable.printStackTrace</methodname>) will ignore causal
+        trees built like this. So be certain, that you have installed
+        centralized exception reporting using MulTEx services.</para>
+      </caution>
+
+      <!--End of How to cope with many Failure causes-->
+    </section>
+
+    <!--End of How to introduce/use MulTEx in the API layers-->
+  </section>
+</article>

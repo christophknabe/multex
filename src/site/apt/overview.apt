@@ -1,0 +1,32 @@
+ -----
+ MulTEx - the Multi-Tier Exception Handling Framework
+ -----
+ Christoph Knabe
+ -----
+ 05 Jul 2007
+ -----
+
+Overview
+
+  MulTEx is a simple, but powerful framework for organizing exceptions and user messages in a multi-tier Java software system. 
+
+  It offers the key features:
+    
+    * Internationalizable message texts and parameters for exceptions 
+
+    * Causal chains/trees as a means to capture low-level error information 
+    
+    * A standard way for writing method bodies with regard to exceptions 
+    
+    * Services for reporting an exception in a nice textual format with its causal chain/tree
+    
+    * Redundancy-free stack traces in the case of indirectly caused exceptions 
+ 
+Author
+
+  Christoph Knabe, TFH Berlin
+  
+Copyright
+
+  MulTEx is open source software copyrighted by the GNU LGPL. The copyright holder is the author. 
+

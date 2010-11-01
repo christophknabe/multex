@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<project name="multex" basedir=".." default="all">
+
+    <target name="init">
+        <property name="multexVersion" value="7.1.1"/> <!-- 2007-06-26 -->
+        <property name="javaVersion" value="1.4"/> <!--used for source attribute of javac and javadoc-->
+        <property name="JUnitJar" value="D:/Java/JUnit3.7/junit.jar"/>
+        <property name="TmpDir" value="C:/temp"/>
+        <property name="TmpClassDir" value="${TmpDir}/class"/>
+        <property name="TmpMultex" value="${TmpDir}/multex"/>
+        <property name="multexClassJar" value="${TmpMultex}/multex-${multexVersion}.jar"/>        <!-- Maven naming convention for .class files -->
+        <property name="multexJavaJar" value="${TmpMultex}/multex-${multexVersion}-sources.jar"/> <!-- Maven naming convention for .java  files -->
+        <property name="releaseZip" value="${TmpDir}/multex${multexVersion}.zip"/>
+        <property name="DocBook-XSL-Version" value="docbook-xsl-1.68.1"/>
+        <property name="DocBook-XSL" value="D:/LAR/trunk/docs/output/${DocBook-XSL-Version}"/>
+        <property name="htmlStylesheetNeeded" value="${DocBook-XSL}/html/docbook.xsl"/>
+        <property environment="environment"/>
+
+        <path id="multex.classpath">
+            <pathelement path="${environment.JAVA_HOME}/lib/tools.jar"/> <!--for doclet API -->
+        </path>
+        
+        <echo message="Generating a release of MulTEx as version number ${multexVersion}"/>
+        <echo message="basedir=${basedir}"/>
+        <echo message="JAVA_HOME=${environment.JAVA_HOME}"/>
+        
+    </target>
+
+    <target name="clean" depends="init" description="Delete all generated files">
+        <echo message="Delete all generated files ..."/>
+        <delete dir="${TmpClassDir}/multex" quiet="true"/>
+        <delete dir="${TmpMultex}" quiet="true"/>
+        <mkdir dir="${TmpMultex}"/>
+        <delete file="${releaseZip}" quiet="true"/>
+    </target>
+
+
+    <target name="framework" description="Compile and pack the framework classes" depends="init">
+        <echo message="Compile and pack the framework classes ..."/>
+        <javac srcdir="src" source="${javaVersion}" debug="true" deprecation="true" encoding="ISO-8859-1"
+            destdir="${TmpClassDir}" includeAntRuntime="no">
+        	<classpath refid="multex.classpath"/>
+        </javac>
+        <jar whenempty="fail" jarfile="${multexClassJar}" basedir="${TmpClassDir}" includes="multex/**"/>
+    </target>
+
+
+    <target name="test" description="Compile and run tests" depends="framework">
+        <echo message="Compile and run the test suite ..."/>
+        <delete dir="${TmpClassDir}/multex" quiet="true"/>
+
+        <javac srcdir="test" source="1.4" debug="true" deprecation="true" encoding="ISO-8859-1"
+            destdir="${TmpClassDir}" classpath="${multexClassJar};${JUnitJar}" includeAntRuntime="no"
+        />
+
+        <java classname="AllTests" fork="true" failonerror="true" 
+            classpath="${TmpClassDir};${multexClassJar};${JUnitJar}"
+        />
+
+        <echo message="JUnit-Tests fertig"/>
+    </target>
+
+
+    <target name="javadoc" depends="init">
+        <echo message="Generating JavaDoc from the framework source code ..."/>
+        <javadoc 
+            packagenames="multex,multex.tool" 
+            source="${javaVersion}"
+            sourcepath="src"
+            classpath="${JUnitJar}"
+            destdir="${TmpMultex}/javadoc"
+            author="true"
+            version="true"
+            use="true"
+            windowtitle="MulTEx ${multexVersion}: API documentation"
+            failonerror="true"
+        />
+    </target>
+
+    
+    <target name="html" depends="init" description="Generate the HTML documentation from all *.docbook.xml sources">
+      <echo message="Pay attention to use a 1.4 JAVA_HOME!"/>
+      <echo message="htmlStylesheetNeeded=${htmlStylesheetNeeded}"/>
+        <xslt style="${htmlStylesheetNeeded}" extension=".html"  basedir="_private" destdir="${basedir}/text">
+            <include name="**/*.docbook.xml"/>
+        </xslt>
+    </target>
+    
+
+    <target name="pack" depends="clean,framework,test,javadoc,html">
+        <echo message="Packaging the release ..."/>
+        <copy todir="${TmpMultex}">
+            <fileset dir="." excludes="_private/**,bin/**,.project,.classpath"/>
+        </copy>
+        
+        <echo message="Create the source distribution .jar file ..."/>
+        <jar whenempty="fail" jarfile="${multexJavaJar}" update="no"  basedir="src"/>
+        <jar whenempty="fail" jarfile="${multexJavaJar}" update="yes" basedir="test"/>
+        <echo message="Created: ${multexJavaJar}"/>
+        
+        <echo message="Create the release .zip file ..."/>
+        <jar whenempty="fail" jarfile="${releaseZip}" basedir="${TmpMultex}"/>
+        <echo message="Created: ${releaseZip}"/>
+        
+    </target>
+
+    <target name="all" depends="clean,test,pack" description="Build everything.">
+        <echo message="Creating the MulTEx Release ${multexVersion} completed."/>
+    </target>
+
+
+</project>

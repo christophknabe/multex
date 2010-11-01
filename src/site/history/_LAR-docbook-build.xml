@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!--Autor: Christoph Knabe, 2005-04-15 -->
+
+<project name="LAR Documentation" basedir="." default="html">
+    <description>
+        Generate the human readable documentation files from the DocBook-XML sources.
+        Uses DocBook-XSL V1.68.1.
+    </description>
+
+	
+	<property name="importDir" value="${basedir}/_import"/>
+	<property name="outputDir" value="${basedir}/output"/>
+	<property name="DocBook-XSL-Version" value="docbook-xsl-1.68.1"/>
+	<property name="DocBook-XSL" value="${outputDir}/${DocBook-XSL-Version}"/>
+	<property name="htmlStylesheetNeeded" value="${DocBook-XSL}/html/docbook.xsl"/>
+	<available property="htmlStylesheetPresent" file="${htmlStylesheetNeeded}"/>
+
+    <target name="init" description="Initialize"> 	
+		<echo message="basedir               = ${basedir}"/>
+		<echo message="importDir             = ${importDir}"/>
+		<echo message="outputDir             = ${outputDir}"/>
+		<echo message="DocBook-XSL           = ${DocBook-XSL}"/>
+		<echo message="htmlStylesheetNeeded  = ${htmlStylesheetNeeded}"/>
+		<echo message="htmlStylesheetPresent = ${htmlStylesheetPresent}"/>
+    </target>
+
+    <target name="unzip" depends="init" unless="htmlStylesheetPresent" 
+    	description="Unzip the DocBook-XSL style sheets, if necessary"
+    	> 	
+		<echo message="Now I try to create ${htmlStylesheetNeeded}"/>
+    	<unzip src="${importDir}/${DocBook-XSL-Version}.zip" dest="${outputDir}"/>
+    </target>
+
+    <target name="html" depends="unzip" description="Generate the HTML documentation from all *.docbook.xml sources">
+    	<!--Works well with ANT 1.6.2 for Knabe/protokolle.docbook.xml, but fails with ArrayIndexOutBoundsException: -1 
+    		for the other, bigger DocBook .xml files. Knabe 2005-04-15
+    	-->
+		<style destdir="${outputDir}" extension=".html" style="${htmlStylesheetNeeded}">
+			<include name="**/*.docbook.xml"/>
+		</style>
+    </target>
+
+</project>

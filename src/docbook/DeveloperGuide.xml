@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN"
+"http://www.oasis-open.org/docbook/xml/4.2/docbookx.dtd">
+<!-- Switch editor to "UTF-8" encoding, so umlaute etc. (e.g. "ÄÖÜ") will be displayed correctly -->
+<article lang="en">
+  <title>Developer's Guide for MulTEx - The Multi Tier Exception Handling
+  Framework</title>
+
+  <articleinfo>
+    <author>
+      <firstname>Christoph</firstname>
+
+      <surname>Knabe</surname>
+
+      <affiliation>
+        <shortaffil>TFH Berlin</shortaffil>
+
+        <orgname class="nonprofit">- University of Applied Sciences
+        -</orgname>
+      </affiliation>
+    </author>
+
+    <pubdate>2007-09-18</pubdate>
+  </articleinfo>
+
+  <para>In this developer's guide we describe, with which tools and how the
+  software is maintained.</para>
+
+  <section>
+    <title>Tools Used</title>
+
+    <section>
+      <title>Programming Tools</title>
+
+      <para>The build process is managed by Maven 2.</para>
+    </section>
+
+    <section>
+      <title>Documentation Tools</title>
+
+      <para>The two textual documents (technical paper
+      <filename>Konzepte.pdf</filename>, and slides
+      <filename>Vortragsfolien.pdf</filename>) are still in german language,
+      and edited in OpenOffice.</para>
+
+      <para>They must be transformed to PDF manually, and then stored manually
+      to the directory <filename>src\site\resources</filename></para>
+
+      <para>The User's and the Developer's Guide are already edited as DocBook
+      XML files in the directory <filename>src\docbook</filename>. See <ulink
+      url="http://www.docbook.org/">http://www.docbook.org/</ulink>. This
+      format is especially useful for being managed by a versioning system,
+      and for generating output for different targets, for example web sites,
+      and printed books.</para>
+
+      <para>You can edit it in an XML-aware text editor, as in the open source
+      jEdit with it's XML plugin, or with a dedicated DocBook XML editor, as
+      the XMLmind XML Editor, see <ulink
+      url="http://www.xmlmind.com/xmleditor/">http://www.xmlmind.com/xmleditor/</ulink>.
+      The latter is much more comfortable. It is free for non-commercial
+      use.</para>
+
+      <para>The DocBook documents are transformed to HTML and PDF by the
+      docbook-maven-plugin for Maven 2, which is located at <ulink
+      url="http://mojo.codehaus.org/docbook-maven-plugin/">http://mojo.codehaus.org/docbook-maven-plugin/</ulink>.
+      The released alpha version 1.0.0 did not work, so we had to use the
+      snapshot from <ulink
+      url="http://snapshots.repository.codehaus.org/">http://snapshots.repository.codehaus.org/</ulink>.</para>
+
+      <para>The command for generating the HTML and PDF output is:</para>
+
+      <para><programlisting>mvn org.codehaus.mojo:docbook-maven-plugin:transform</programlisting>The
+      documents are generated into the
+      <filename>target\site\docbook</filename> directory. From file
+      <filename>src\site\site.xml</filename> you can link to them.</para>
+
+      <!--End of Documentation Tools-->
+    </section>
+
+    <!--End of Tools Used-->
+  </section>
+</article>
