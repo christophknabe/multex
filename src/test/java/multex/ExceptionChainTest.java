@@ -1,37 +1,20 @@
-package multex;
+package multex; //ExceptionChainTest.java
 
+import org.junit.Test;
+import org.junit.Assert;
 import multex.test.NotextException3Chain;
 
-//ExceptionChainTest.java
-
 //2003-07-01  Knabe  Test case for Failure.getOriginalException()
-//2003-05-??  Knabe  Umbau zu ExceptionChainTest
-//2002-05-30  Knabe  Umbau von Stack_bt gem‰ﬂ Beispiel junit.samples.VectorTest
+//2003-05-??  Knabe  Modified to ExceptionChainTest
+//2002-05-30  Knabe  Created from Stack_bt following example junit.samples.VectorTest
 
 /**JUnit batch test driver for the exception chaining facilities of MulTEx,
   JDK 1.1, and individual legacy-chained exceptions.
 */
-public class ExceptionChainTest extends junit.framework.TestCase {
+public class ExceptionChainTest extends Assert {
 
 
-//Verwaltungsoperationen:
-
-public ExceptionChainTest(final String name) {
-  super(name);
-}
-public static void main (final String[] args) {
-  junit.textui.TestRunner.run(suite());
-}
-public static junit.framework.Test suite() {
-  final junit.framework.TestSuite result
-  = new junit.framework.TestSuite(ExceptionChainTest.class);
-  return result;
-}
-
-//Einzelne Testschritte:
-
-
-public void testJdk1_1Exceptions(){
+@Test public void jdk1_1Exceptions(){
     //Construct a chain of the 4 legacy-chained exceptions in JDK 1.1:
     final java.sql.DataTruncation ex5 = new java.sql.DataTruncation(7,false,true,20,5);
     final java.sql.SQLWarning   ex4 = new java.sql.SQLWarning();
@@ -57,7 +40,7 @@ public void testJdk1_1Exceptions(){
     checkCauseChain(ex1, new Throwable[]{ex2,ex3,ex4,ex5});
 }
 
-public void testLegacyExceptions(){
+@Test public void legacyExceptions(){
     //Construct a chain of the legacy-chained exceptions in JDK 1.2:
     final java.io.FileNotFoundException ex5 = new java.io.FileNotFoundException("report.lis");
     final java.awt.print.PrinterIOException ex4 = new java.awt.print.PrinterIOException(ex5);
@@ -69,7 +52,7 @@ public void testLegacyExceptions(){
     checkCauseChain(ex1, new Throwable[]{ex2,ex3,ex4,ex5});
 }
 
-public void testExceptionsWithoutThrowableGetter(){
+@Test public void exceptionsWithoutThrowableGetter(){
     //Construct a chain of cause-aware legacy exceptions:
     final StupidException ex3 = new StupidException();
     final KillMeException ex2 = new KillMeException(ex3);
@@ -84,7 +67,7 @@ public void testExceptionsWithoutThrowableGetter(){
     assertEquals(null, ex3Cause);
 }
 
-public void testGetContainedException(){
+@Test public void getContainedException(){
 	final Throwable chain = NotextException3Chain.construct();
 	
 	final Throwable ex1 = Util.getContainedException(chain, NotextException3Chain.MainFailure.class);
@@ -100,7 +83,7 @@ public void testGetContainedException(){
 	assertSame(null, notContainedExc);
 }
 
-public void testGetOriginalException(){
+@Test public void getOriginalException(){
 	final Throwable chain = NotextException3Chain.construct();
 	final Throwable origin = Util.getOriginalException(chain);
 	assertSame(NotextException3Chain.ex3, origin);

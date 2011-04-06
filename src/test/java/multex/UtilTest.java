@@ -4,71 +4,60 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.StringReader;
+import org.junit.Test;
+import org.junit.Assert;
 
-import multex.test.TestUtil;
+import multex.test.MultexAssert;
 
 
 /**JUnit batch test driver for the class multex.Msg. @author Christoph Knabe*/
-public class UtilTest extends junit.framework.TestCase {
+public class UtilTest extends MultexAssert {
 
 
     //Testfixtures:
-	private final Exc       t1  = new Exc("Kategorie nicht erlaubt");      //Leave at line 16
+    private static final int _baseLineNumber = 18; //Must be the same as the line it stands on!!!
+	private final Exc       t1  = new Exc("Kategorie nicht erlaubt");      //Leave at this line!
 	private final Throwable t21 = new FileNotFoundException("kasse.dat");  //Leave at line 17
 	private final Failure t2    = new Failure("Ziel nicht gefunden", t21); //Leave at line 18
 	private final Exc listExc   = new Exc("Verarbeitungsfehler", t1, t2);  //Leave at line 19
+    private static final int _t1LineNumber = _baseLineNumber + 1;
+    private static final int _t21LineNumber = _t1LineNumber + 1;
+    private static final int _t2LineNumber = _t21LineNumber + 1;
+    private static final int _listExcLineNumber = _t2LineNumber + 1;
 
 	private final String className = UtilTest.class.getName();
-	
-	//Verwaltungsoperationen:
-
-	public UtilTest(final String name) {
-	  super(name);
-	}
-	
-	public static void main (final String[] i_args) {
-	  junit.textui.TestRunner.run(suite());
-	}
-	
-	public static junit.framework.Test suite() {
-	  final junit.framework.TestSuite result
-	  = new junit.framework.TestSuite(UtilTest.class);
-	  return result;
-	}
-	
-	//Einzelne Testschritte:
-	  
-	/**Tests cloning an object array or null.*/
-	public void testCloneObjectArray(){
+		  
+	/** Tests cloning an object array or null. */
+	@Test public void cloneObjectArray(){
 		final Integer entry1 = new Integer(1);
 		final Character entry2 = new Character('2');
 	    final String entry3 = "333";
 	    final Object[] original = {entry1, entry2, entry3};
 	    final Object[] expected = {entry1, entry2, entry3};
-	    TestUtil.assertEquals(expected, original);
+	    assertEquals(expected, original);
 		
 		final Object[] clone = Util.clone(original);
-	    TestUtil.assertEquals(expected, clone);
+	    assertEquals(expected, clone);
 	    assertTrue(original!=clone);
 	    for(int i=0; i<original.length; i++){
 	    	original[i] = "X" + i;
 	    }
-	    TestUtil.assertEquals(expected, clone);
+	    assertEquals(expected, clone);
 	    assertTrue(!expected[0].equals(original[0]));
 	}
 	
-	/**Tests getting all causes (including those stored as parameters of a {@link MultexException}).*/
-	public void testGetCauses(){
+	/** Tests getting all causes (including those stored as parameters of a {@link MultexException}). */
+	@Test public void getCauses(){
 		final Throwable lowExc1 = new Exc("lowExc1");
 		final Throwable lowExc2 = new NullPointerException("lowExc2");
 		final Throwable topExc  = new Failure("topExc", lowExc1, "par0", lowExc2, "par2");
 		final Throwable[] expectedCauses = new Throwable[]{lowExc1, lowExc2}; 
 		final Throwable[] actualCauses = Util.getCauses(topExc);
-	    TestUtil.assertEquals(expectedCauses, actualCauses);
+	    assertEquals(expectedCauses, actualCauses);
 	}
     
-    /**Tests getting the lowest cause of an exception chain by the cause getter.*/
-    public void testGetOriginalException(){
+    /** Tests getting the lowest cause of an exception chain by the cause getter. */
+    @Test public void getOriginalException(){
         final Throwable t3 = new Failure("topExc", t2);
         final Throwable result = Util.getOriginalException(t3);
         assertSame(t21, result);
@@ -77,34 +66,33 @@ public class UtilTest extends junit.framework.TestCase {
         assertNull(nullResult);
     }
 	
-	/**Tests printing the stack trace for an Exc with a list of Throwables as parameters.
-	*/
-	public void testAppendCompactStackTrace_ListExc(){
+	/** Tests printing the stack trace for an Exc with a list of Throwables as parameters. */
+	@Test public void appendCompactStackTrace_ListExc(){
 		final StringBuffer buf = new StringBuffer();
 		Util.appendCompactStackTrace(buf, listExc);
 		final String result = buf.toString();
-		TestUtil.assertIsContained("kasse.dat", result);
-		TestUtil.assertIsContained("Ziel nicht gefunden", result);
-		TestUtil.assertIsContained("Kategorie nicht erlaubt", result);
-		TestUtil.assertIsContained("Verarbeitungsfehler", result); 
+		assertIsContained("kasse.dat", result);
+		assertIsContained("Ziel nicht gefunden", result);
+		assertIsContained("Kategorie nicht erlaubt", result);
+		assertIsContained("Verarbeitungsfehler", result); 
 		final String expected =
 			"+" + t1.getClass().getName() + ": " + t1.getDefaultMessageTextPattern() + Util.lineSeparator
-			+ "\tat multex.UtilTest.<init>(UtilTest.java:16)" + Util.lineSeparator
+			+ "\tat multex.UtilTest.<init>(UtilTest.java:" + _t1LineNumber + ")" + Util.lineSeparator
 			+ "++" + t21.getClass().getName() + ": " + t21.getMessage() + Util.lineSeparator
-			+ "\tat multex.UtilTest.<init>(UtilTest.java:17)" + Util.lineSeparator
+			+ "\tat multex.UtilTest.<init>(UtilTest.java:" + _t21LineNumber + ")" + Util.lineSeparator
 			+ Util.wasCausing + Util.lineSeparator
 			+ "+" + t2.getClass().getName() + ": " + t2.getDefaultMessageTextPattern() + Util.lineSeparator
-			+ "\tat multex.UtilTest.<init>(UtilTest.java:18)" + Util.lineSeparator
+			+ "\tat multex.UtilTest.<init>(UtilTest.java:" + _t2LineNumber + ")" + Util.lineSeparator
 			+ Util.wasCausing + Util.lineSeparator
 			+ listExc.getClass().getName() + ": " + listExc.getDefaultMessageTextPattern() + Util.lineSeparator
-			+ "\tat multex.UtilTest.<init>(UtilTest.java:19)" + Util.lineSeparator
+			+ "\tat multex.UtilTest.<init>(UtilTest.java:" + _listExcLineNumber + ")" + Util.lineSeparator
 			+ "\tat sun.reflect."			
 		;
-		TestUtil.assertIsStart(expected, result);
+		assertIsStart(expected, result);
 	}
 
-    /**Tests appending only the irredundant trace elements*/
-    public void testFailingAppendIrredundantTraceLines(){
+    /** Tests appending only the irredundant trace elements. */
+    @Test public void failingAppendIrredundantTraceLines(){
         //io_destination is null:
         try {
             Util.appendIrredundantTraceLines(null, null, null);
@@ -117,12 +105,8 @@ public class UtilTest extends junit.framework.TestCase {
         assertEquals("multex.Util: No stack trace elements to append.", io_destination.toString());
     }
 
-    /**Tests appending only the irredundant trace elements
-     * TODO Activate when MulTEx will be fixed to platform JRE 5
-     */
-    
-/*   
-    public void testSucceedingAppendIrredundantTraceLinesOnJRE5(){
+    /** Tests appending only the irredundant trace elements. */
+    @Test public void succeedingAppendIrredundantTraceLinesOnJRE5(){
         final StringBuffer io_destination = new StringBuffer();
         final StackTraceElement[] i_reporteeElements = {
                 new StackTraceElement("Ca","ma","Fa",1),
@@ -137,12 +121,11 @@ public class UtilTest extends junit.framework.TestCase {
         Util.appendIrredundantTraceLines(io_destination, i_reporteeElements, i_causeeElements);
         assertEquals("\tat Ca.ma(Fa:1)"+Util.lineSeparator+"\tat Cb.mb(Fb:2)"+Util.lineSeparator, io_destination.toString());
     }
-*/
     
-    /**Tests appending only the irredundant trace elements
+    /**Tests appending only the irredundant trace elements.
      * @throws IOException 
      */
-    public void testSucceedingAppendIrredundantTraceLinesOnJRE1_4() throws IOException{
+    @Test public void succeedingAppendIrredundantTraceLinesOnJRE1_4() throws IOException{
         final String traceString = captureStandardStackTrace(testException);
 
         //Test with i_causeeElements is null; must append the complete testTrace:
@@ -182,10 +165,10 @@ public class UtilTest extends junit.framework.TestCase {
         //collect stack traces onto out writer:
         throwable.printStackTrace(out);
         return sw.toString();
-    }
-    
+    }    
 
     private static final Exception testException = new Exception();
     private static final StackTraceElement[] testTrace = testException.getStackTrace();
+    
 
 }//UtilTest

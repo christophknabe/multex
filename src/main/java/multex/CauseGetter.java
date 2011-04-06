@@ -7,8 +7,10 @@ package multex; //CauseGetter.java
   not a subclass of {@link Failure}
 */
 public interface CauseGetter {
+    
   /**Returns the causing Throwable object of an i_throwable other than Failure,
     or null if not known
   */
   Throwable getCause(Throwable i_throwable);
+  
 }

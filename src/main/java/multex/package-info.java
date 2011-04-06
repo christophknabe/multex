@@ -1,10 +1,4 @@
-<HTML>
-<HEAD>
-<TITLE>MulTEx - the Multi-Tier Exception Handling Framework</TITLE>
-</HEAD>
-
-<BODY>
-<B>MulTEx</B> - the Multi-Tier Exception Handling Framework.
+/** MulTEx - the Multi-Tier Exception Handling Framework.
 <P>MulTEx is a simple, but powerful framework for organizing exceptions
 and messages is a multi-tier Java software system.
 </P>
@@ -60,19 +54,26 @@ The plans are ordered by priority (most important as No. 1)
 <A name="versionHistory"/>
 <H2>Version history</H2><UL>
 
-  <li>8.2 of 2009-10-22: multex.tool.ExceptionMessagesDoclet always uses encoding ISO-8859-1 for appending
+  <li>8.3 of 2011-04-05: Compiled and runs on Java 6. 
+    Class {@link multex.Util} has a new method {@link multex.Util#setMaxRecursionDepth(int)}.
+    The lower level utility method {@link multex.Util#getCause(Throwable)}
+    automatically uses the value configured by {@link multex.Util#setMaxRecursionDepth(int)}.
+    The limitation of the recursion depth became necessary with the <code>org.apache.derby.client.am.SqlException</code>,
+    whose method <code>getSQLException</code> wraps the <code>SqlException</code> into a <code>SQLException</code>.
+  </li>
+  <li>8.2 of 2009-10-22: {@link multex.tool.ExceptionMessagesDoclet} always uses encoding ISO-8859-1 for appending
     message text patterns to the -out file, as Java .properties files always have to be encoded this way.
   </li>
-  <li>8.1 of 2008-12-08: MultexUtil.create accepts exception class without cause or parameters.
+  <li>8.1 of 2008-12-08: {@link multex.MultexUtil#create(Class, Object...)} accepts exception class without cause or parameters.
   </li>
   <li>8.0 of 2008-01-09: New german paper about Central Exception Reporting.
-    <BR/>Class Exc now unchecked.
-    <BR/>Method <CODE>&lt;E extends Exc&gt; void throwMe(final Object... i_parameters) throws E</CODE> in class Exc</li>
-    <BR/>Method <CODE>Util.getOriginalException(null)</CODE> returns <B>null</B> instead of throwing a <CODE>NullPointerException</CODE>
+    <br/>Class {@link multex.Exc} now unchecked.
+    <br/>Method {@link multex.Exc#throwMe(Object...)} in class <code>Exc</code>
+    <br/>Method {@link multex.Util#getOriginalException(Throwable)} called with a <b>null</b> argument returns <b>null</b> instead of throwing a <code>NullPointerException</code>
   </li>
   <LI>7.3 of 2007-09-18:
     Compatible to previous version 7.2, but requires Java 5. Using the new features of Java 5, where helpful.
-    <BR/>Static factory method for parameterized exceptions: <CODE>create(Class&lt;MultexException&gt;, Object... params)</CODE> in class {@link multex.MultexUtil}.
+    <BR/>Static factory method for parameterized exceptions: {@link multex.MultexUtil#create(Class, Object...)}.
     This allows a much simpler declaration of a parameterized exception, as you no longer have to declare a constructor in it.
     <BR/>The constructors for the parameterized exception classes {@link multex.Exc}, {@link multex.Failure}, and {@link multex.AssertionFailure},
     and the method {@link multex.Assertion#check} are now using an <code>Object...</code> parameter, instead of being overloaded with
@@ -265,7 +266,7 @@ The plans are ordered by priority (most important as No. 1)
       </LI>
       <LI>Now its possible to redefine the method checkClass() in order to
         modify or deactivate the checking of the naming conventions of the
-        descendants of Exc and Failure.
+        descendants of {@link multex.Exc} and {@link multex.Failure}.
       </LI>
       <LI>class multex.Awt: After showing the stack trace scrolls upwards in
         order to show its beginning.
@@ -330,5 +331,5 @@ The plans are ordered by priority (most important as No. 1)
   <LI>0.0 of 1999..2000  Evolution of this framework. The name MulTEx was not yet used.</LI>
 </UL>
 @author Christoph Knabe, TFH Berlin, 1999-2000 Copyrighted, but usable by GNU LGPL.
-</BODY>
-</HTML>
+ */
+package multex;

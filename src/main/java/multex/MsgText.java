@@ -141,6 +141,7 @@ private static void _appendMessageTreeRecursively(
     final StringBuffer io_destination, final Throwable i_throwable, final ResourceBundle i_resourceBundle,
     final String i_causeMarker, final int i_level
 ){
+    final int maxRecursionDepth = Util.getMaxRecursionDepth();
     final Throwable directCause = Util.getCause(i_throwable);
     //Tests, if i_throwable should be reported, i.e. is not a tunnelling exception
     final boolean isTunnelling;
@@ -157,7 +158,18 @@ private static void _appendMessageTreeRecursively(
     }
 
     if(!isTunnelling) {
-        _appendCauseLine(io_destination, i_throwable, i_resourceBundle, i_causeMarker, i_level);
+        if(i_level < maxRecursionDepth){
+            _appendCauseLine(io_destination, i_throwable, i_resourceBundle, i_causeMarker, i_level);
+        }else{
+            _appendCauseLineStart(io_destination, i_causeMarker, i_level);
+            io_destination.append("SEVERE problem when reporting an exception: Exceeding maximum causal recursion depth of ");
+            io_destination.append(maxRecursionDepth);
+            io_destination.append(".");
+            io_destination.append(Util.lineSeparator);
+            io_destination.append("...");
+            io_destination.append(Util.lineSeparator);
+            return;
+        }
     }
     if(directCause!=null){
         _appendMessageTreeRecursively(
@@ -188,13 +200,24 @@ private static void _appendMessageTreeRecursively(
  */
 private static void _appendCauseLine(final StringBuffer io_destination, final Throwable i_throwable, final ResourceBundle resourceBundle, final String causeMarker, final int level) {
     if(level>0){
-        io_destination.append(Util.lineSeparator);
-        Util.appendCauseIndentation(io_destination, level);
-        io_destination.append(causeMarker);
+        _appendCauseLineStart(io_destination, causeMarker, level);
     }
     _appendMessageLineDeletingPreviousOccurence(
         io_destination, i_throwable,    resourceBundle
     );
+}
+
+
+/**
+ * @param io_destination
+ * @param causeMarker
+ * @param level
+ */
+private static void _appendCauseLineStart(final StringBuffer io_destination,
+        final String causeMarker, final int level) {
+    io_destination.append(Util.lineSeparator);
+    Util.appendCauseIndentation(io_destination, level);
+    io_destination.append(causeMarker);
 }
 
 

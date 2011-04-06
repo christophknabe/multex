@@ -3,15 +3,11 @@ package multex.test;
 import junit.framework.Assert;
 import junit.framework.AssertionFailedError;
 
-/**
- * @author administrator
- *
- * To change this generated comment edit the template variable "typecomment":
- * Window>Preferences>Java>Templates.
- * To enable and disable the creation of type comments go to
- * Window>Preferences>Java>Code Generation.
+/** Extension of the standard JUnit Assert class with some special assertions,
+ * which give better diagnostics in case of long Strings or collections.
+ * @author Knabe
  */
-public final class TestUtil extends Assert {
+public class MultexAssert extends Assert {
 
 	/**Checks, that i_contained is contained in i_total*/
 	public static void assertIsContained(final String i_contained, final String i_total)

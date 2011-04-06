@@ -2,6 +2,8 @@ package multex;  //MsgTextTest.java
 
 import java.util.Locale;
 import java.util.ResourceBundle;
+import org.junit.Test;
+import org.junit.Assert;
 
 import multex.test.MsgTextResourceBundle;
 import multex.test.MsgTextDeResourceBundle;
@@ -10,31 +12,14 @@ import multex.test.NotextNoparamExc;
 
 import org.xml.sax.SAXException;
 
-//2003-05-08  Knabe  Aus Vorlage MsgTest
-//2002-05-30  Knabe  Umbau von Stack_bt gemäß Beispiel junit.samples.VectorTest
+//2003-05-08  Knabe  Modified from MsgTest
+//2002-05-30  Knabe  Created from Stack_bt following example junit.samples.VectorTest
 
-/**JUnit batch test driver for the class multex.MsgText.
-*/
-public class MsgTextTest extends junit.framework.TestCase {
+/** JUnit batch test driver for the class multex.MsgText */
+public class MsgTextTest extends Assert {
 
 
 private static final Class _myClass = MsgTextTest.class;
-//Verwaltungsoperationen:
-
-public MsgTextTest(String name) {
-  super(name);
-}
-public static void main (String[] args) {
-  junit.textui.TestRunner.run(suite());
-  System.out.println(_myClass.getName() + " OK");
-}
-public static junit.framework.Test suite() {
-  final junit.framework.TestSuite result
-  = new junit.framework.TestSuite(_myClass);
-  return result;
-}
-
-//Einzelne Testschritte:
 
 private static final String    _ex2Par = "MyClass";
 private static final Exception _ex2    = new ClassCastException(_ex2Par);
@@ -42,11 +27,8 @@ private static final String    _ex2Name = "java.lang.ClassCastException";
 private static final Exception _ex1 = new multex.test.InitFailure(_ex2, "OOO", 9999);
 private static final String    _ex1Name = "multex.test.InitFailure";
 private static final String ursachenMarkierer = "CAUSE: ";
-/*private static final MultexLocale _locale 
-= new multex.test.MsgTextDeResourceBundle(), null, ursachenMarkierer);
-*/
 
-public void testGetMessageTextPattern_withoutAnyTexts(){
+@Test public void getMessageTextPattern_withoutAnyTexts(){
 	final Throwable ex1 = NotextException3Chain.construct();
 
 	final String result1 = MsgText.getMessageTextPattern(ex1);
@@ -59,7 +41,7 @@ public void testGetMessageTextPattern_withoutAnyTexts(){
 	assertEquals(null, result3);
 }
 
-public void testGetMessageTextPattern_withResourceBundle(){
+@Test public void getMessageTextPattern_withResourceBundle(){
 	final ResourceBundle germanBundle = new multex.test.MsgTextDeResourceBundle();
 	assertEquals("de", germanBundle.getLocale().toString());
 	
@@ -70,7 +52,7 @@ public void testGetMessageTextPattern_withResourceBundle(){
 	assertEquals(MsgTextDeResourceBundle.initFailureText, result2);
 }
 
-public void testAppendMessageLineWithoutAnyText(){
+@Test public void appendMessageLineWithoutAnyText(){
 	final Throwable ex1 = NotextException3Chain.construct();
 
 	final StringBuffer result = new StringBuffer();
@@ -100,7 +82,7 @@ public void testAppendMessageLineWithoutAnyText(){
 	);
 }
 
-public void testAppendMessageLineWithDefaultLocale(){
+@Test public void appendMessageLineWithDefaultLocale(){
 	final ResourceBundle unspecBundle = new multex.test.MsgTextResourceBundle();
     //System.out.println(getClass().getName() + ".testAppendMessageLineWithDefaultLocale: default Locale is: " + unspecBundle.getLocale());
 	final StringBuffer result2 = new StringBuffer();
@@ -113,7 +95,7 @@ public void testAppendMessageLineWithDefaultLocale(){
 
 }
 
-public void testAppendMessageLine_WithClassCastException_WithNeitherTextNorDetailMessage(){
+@Test public void appendMessageLine_WithClassCastException_WithNeitherTextNorDetailMessage(){
 	final StringBuffer result = new StringBuffer();
 	final Throwable ex = new ClassCastException();
 	MsgText.appendMessageLine(result, ex, null);
@@ -123,7 +105,7 @@ public void testAppendMessageLine_WithClassCastException_WithNeitherTextNorDetai
 	);
 }
 
-public void testAppendMessageLine_WithMultexException_WithNeitherTextNorDetailMessage(){
+@Test public void appendMessageLine_WithMultexException_WithNeitherTextNorDetailMessage(){
 	final StringBuffer result = new StringBuffer();
 	final Throwable ex = new NotextNoparamExc();
 	MsgText.appendMessageLine(result, ex, null);
@@ -133,7 +115,7 @@ public void testAppendMessageLine_WithMultexException_WithNeitherTextNorDetailMe
 	);
 }
 
-public void testAppendMessageLineWithClassCastExceptionWithoutDetailMessage(){
+@Test public void appendMessageLineWithClassCastExceptionWithoutDetailMessage(){
 	final StringBuffer result = new StringBuffer();
 	final Throwable ex = new ClassCastException();
 	final ResourceBundle bundle = new multex.test.MsgTextResourceBundle();
@@ -144,8 +126,8 @@ public void testAppendMessageLineWithClassCastExceptionWithoutDetailMessage(){
 	);
 }
 
-public void testAppendMessageLineWithExcAndNeitherMultexNorThrowableParameters(){
-	final String expected = "Das Gerät ist zur Zeit belegt";
+@Test public void appendMessageLineWithExcAndNeitherMultexNorThrowableParameters(){
+	final String expected = "Das Gerï¿½t ist zur Zeit belegt";
 	final StringBuffer result = new StringBuffer();
 	final Throwable ex = new Exc(expected);
 	final ResourceBundle unspecBundle = new multex.test.MsgTextResourceBundle();
@@ -156,7 +138,7 @@ public void testAppendMessageLineWithExcAndNeitherMultexNorThrowableParameters()
 	);
 }
 
-public void testToStringSimple(){
+@Test public void toStringSimple(){
 	//In the case without cause the standard String representation is
 	//   package.subpackage.Class: detailMessage
 	final Throwable throwable = new Throwable("AAA");
@@ -171,7 +153,7 @@ public void testToStringSimple(){
 	assertEquals(saxException.toString(), saxExceptionString);
 }
 
-public void testToStringWithCause(){
+@Test public void toStringWithCause(){
 	final IllegalArgumentException illegalArgumentException = new IllegalArgumentException("99");
 	final String illegalArgumentExceptionString = Util.toString(illegalArgumentException);
 	assertEquals("java.lang.IllegalArgumentException: 99", illegalArgumentExceptionString);
@@ -192,7 +174,7 @@ public void testToStringWithCause(){
 	assertEquals("org.xml.sax.SAXException: BBB; Caused by: java.lang.IllegalArgumentException: 99", saxExceptionString);
 }
 
-public void testFormatWithLocales(){
+@Test public void formatWithLocales(){
 	final StringBuffer result = new StringBuffer();
 	final Float number = new Float(9999.99);
 	final Object[] parameters = new Object[]{number};
@@ -206,7 +188,7 @@ public void testFormatWithLocales(){
 
 }
 
-public void testAppendMessageLineWithLocales(){
+@Test public void appendMessageLineWithLocales(){
 	final ResourceBundle englishBundle = new multex.test.MsgTextEnResourceBundle();
     //System.out.println(getClass().getName() + ".testAppendMessageLineWithLocales: english Locale is: " + englishBundle.getLocale());
 	

@@ -1,25 +1,22 @@
 package multex;
 
+import java.io.File;
+import org.junit.Test;
+import org.junit.Assert;
 import static multex.MultexUtil.create;
 
-import java.io.File;
 
-import junit.framework.TestCase;
+public class MultexUtilTest extends Assert {
 
-public class MultexUtilTest extends TestCase {
 
-    public MultexUtilTest(String name) {
-        super(name);
-    }
-
-    public void testCreateExcWithoutParams(){
+    @Test public void createExcWithoutParams(){
         final MultexException e = create(FileNotFoundExc.class);
         assertTrue(e instanceof FileNotFoundExc);
         final Object[] parameters = e.getParameters();
         assertEquals(0, parameters.length);
     }
     
-    public void testCreate(){
+    @Test public void createExcWithParams(){
         final File dataDirectory = new File("/data");
         final MultexException e = create(FileNotFoundExc.class, "data.log", dataDirectory);
         assertTrue(e instanceof FileNotFoundExc);
@@ -28,7 +25,7 @@ public class MultexUtilTest extends TestCase {
         assertSame(dataDirectory, parameters[1]);
     }
 
-    public void testCreateExcWithCause(){
+    @Test public void createExcWithCause(){
         final Exception cause = new Exc("cause");
         final File dataDirectory = new File("/data");
         final MultexException e = create(FileNotFoundExc.class, cause, "data.log", dataDirectory);
@@ -39,7 +36,7 @@ public class MultexUtilTest extends TestCase {
         assertSame(dataDirectory, parameters[1]);
     }
     
-    public void testCreateFailureWithCause(){
+    @Test public void createFailureWithCause(){
         final Exception cause = new Exc("cause");
         final File dataDirectory = new File("/data");
         final MultexException e = create(FileOpenFailure.class, cause, "data.log", dataDirectory);
@@ -50,7 +47,7 @@ public class MultexUtilTest extends TestCase {
         assertSame(dataDirectory, parameters[1]);
     }
     
-    public void testThrowCreate(){
+    @Test public void throwCreate(){
         final File dataDirectory = new File("/data");
         try {
             throw create(FileNotFoundExc.class, "data.log", dataDirectory);

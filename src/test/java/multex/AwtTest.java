@@ -1,31 +1,17 @@
 package multex;  //AwtTest.java
 
+import org.junit.Test;
+import org.junit.Assert;
+
+//2011-03-25  Knabe  Migrated to JUnit 4.5
 //2004-05-11  Knabe  Aus Vorlage MsgTest
 
-/**JUnit batch test driver for the class multex.Awt.
-*/
-public class AwtTest extends junit.framework.TestCase {
-
-
-//Verwaltungsoperationen:
-
-public AwtTest(String name) {
-  super(name);
-}
-public static void main (String[] args) {
-  junit.textui.TestRunner.run(suite());
-}
-public static junit.framework.Test suite() {
-  final junit.framework.TestSuite result
-  = new junit.framework.TestSuite(AwtTest.class);
-  return result;
-}
-
-//Einzelne Testschritte:
-
-/**Tests counting the lines in a String
-*/
-public void testCountLines(){
+/** JUnit batch test driver for the class multex.Awt */
+public class AwtTest extends Assert {
+    
+    
+/** Tests counting the lines in a String. */
+@Test public void countLines(){
 	_testCountLines(0, "");
 	_testCountLines(1, "a");
 	_testCountLines(1, "abc" + _lineSeparator);
@@ -53,7 +39,7 @@ private static class _ExcHdlWithoutDefaultConstructor implements AwtExceptionHan
     public void handle(Throwable t){}
 } 
 
-public static void testRegisterAwtExceptionHandlerClass(){
+@Test public void registerAwtExceptionHandlerClass(){
     try{
         Awt.setAwtExceptionHandlerClass(null);
         fail("Failure expected");

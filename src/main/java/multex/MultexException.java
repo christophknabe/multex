@@ -8,8 +8,7 @@ package multex; //MultexException.java
 /**Marks an exception as to be handled especially by MsgText. A MultexException
   has indexed parameters as a polymorphic Object[], which can be inserted into
   the message text pattern by directives {0} to {9}. General purpose subclasses should provide a
-  constructor with an Object[] of up to 10 elements and convenience constructors
-  with up to 10 individual parameters of type Object, as well as a convenience constructor
+  constructor with a parameter of type Object... with up to 10 elements, as well as a convenience constructor
   with a Collection of Throwable objects for the parameters.
   See <A HREF="http://java.sun.com/j2se/1.3/docs/api/java/text/MessageFormat.html">
   *java.text.MessageFormat</A>.
@@ -59,8 +58,7 @@ public String getMessage();
 
 /**Initializes the parameters array of this exception.
  * Normally to be called only by the MulTEx framework.
- * @param <E> The exception type of the object, for which parameters are to be initialized.
- * @param i_parameters the parameters to initialized
+ * @param i_parameters the parameters to be used for initialization
  * @return the exception object, of which the parameters have been initialized.
  */
 MultexException initParameters(final Object... i_parameters);

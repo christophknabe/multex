@@ -1,34 +1,20 @@
-package multex;
+package multex; //ExceptionTreeTest.java
 
+import org.junit.Test;
 import static multex.MultexUtil.create;
+import multex.test.MultexAssert;
 
-//ExceptionTreeTest.java
+//2003-05-??  Knabe  Modified to ExceptionTreeTest
+//2003-05-??  Knabe  Modified to ExceptionChainTest
+//2002-05-30  Knabe  Created from Stack_bt following example junit.samples.VectorTest
 
-//2003-05-??  Knabe  Umbau zu ExceptionTreeTest
-//2003-05-??  Knabe  Umbau zu ExceptionChainTest
-//2002-05-30  Knabe  Umbau von Stack_bt gem‰ﬂ Beispiel junit.samples.VectorTest
+/** JUnit batch test driver for the exception treeing facilities of MulTEx. */
+public class ExceptionTreeTest extends MultexAssert {
 
-/**JUnit batch test driver for the exception treeing facilities of MulTEx.*/
-public class ExceptionTreeTest extends junit.framework.TestCase {
-
-    
-    //Verwaltungsoperationen:
-    
-    public ExceptionTreeTest(final String name) {
-      super(name);
-    }
-    public static void main (final String[] args) {
-      junit.textui.TestRunner.run(suite());
-    }
-    public static junit.framework.Test suite() {
-      final junit.framework.TestSuite result
-      = new junit.framework.TestSuite(ExceptionTreeTest.class);
-      return result;
-    }
     
     //Einzelne Testschritte:
     
-    public void testExceptionTree(){
+    @Test public void testExceptionTree(){
         final SingleCopyFailure exc1 = create(SingleCopyFailure.class, new IllegalArgumentException(), "alpha.dat", "/tmp/");
         final SingleCopyFailure exc2 = create(SingleCopyFailure.class, new NullPointerException(), "beta.dat", "/tmp/");
         final CopyNotAllowedExc exc3 = create(CopyNotAllowedExc.class, "gamma.dat", "knabe");
@@ -50,7 +36,7 @@ public class ExceptionTreeTest extends junit.framework.TestCase {
             + "    {0} = 'gamma.dat'" + _lineSeparator
             + "    {1} = 'knabe'"
             ;
-        multex.test.TestUtil.assertLongStringEquals(expected, buf.toString());
+        assertLongStringEquals(expected, buf.toString());
     };
     
     /**The copying of the data file failed in {0} cases.*/

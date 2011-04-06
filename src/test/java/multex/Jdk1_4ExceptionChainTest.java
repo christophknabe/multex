@@ -1,15 +1,16 @@
-package multex;
-
-//Jdk1_4ExceptionChainTest.java
+package multex; //Jdk1_4ExceptionChainTest.java
 
 //2002-07-02  Knabe  Creation
+
+import org.junit.Test;
+import org.junit.Assert;
 
 /**JUnit batch test driver for the exception chaining facilities of JDK 1.4.
   Compilable and useful only on JDK 1.4.
 */
-public class Jdk1_4ExceptionChainTest extends junit.framework.TestCase {
+public class Jdk1_4ExceptionChainTest extends Assert {
 
-
+/*
 //Verwaltungsoperationen:
 
 public Jdk1_4ExceptionChainTest(final String name) {
@@ -23,12 +24,12 @@ public static junit.framework.Test suite() {
 }
 
 //Einzelne Testschritte:
-
+*/
 
 /**Test exceptions, which provide a cause by the standard means of JDK 1.4,
   i.e. by the getCause() method of Throwable
 */
-public void testJdk1_4Exceptions(){
+@Test public void testJdk1_4Exceptions(){
     //Construct a chain of the legacy exceptions giving them a cause by initCause(Throwable):
     final IllegalAccessException ex5 = new IllegalAccessException("root exc") ;
     //throwable.initCause(Throwable) will compile only on JDK 1.4:

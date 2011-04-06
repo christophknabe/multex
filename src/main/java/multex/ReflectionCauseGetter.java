@@ -17,7 +17,7 @@ import java.lang.reflect.Modifier;
 */
 public class ReflectionCauseGetter implements CauseGetter {
     
-    
+        
   /**Returns the cause of i_throwable.
     Firstly tries the method getCause(), which is the standard cause getter from
     JDK 1.4.
@@ -67,8 +67,7 @@ public class ReflectionCauseGetter implements CauseGetter {
 
     return null;
   }//getCause
-
-
+  
   /**Gets the cause of i_throwable using i_getCauseMethod.
     @return The cause of i_throwable, if the result of successfully calling
       i_getCauseMethod on i_throwable is of type Throwable, otherwise null.

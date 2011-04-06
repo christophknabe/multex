@@ -33,7 +33,7 @@ public class Util {
     public final static void setCauseGetter(final CauseGetter i_causeGetter){
         _causeGetter = i_causeGetter;
     }
-
+    
     /** Result: The directly causing Throwables of i_throwable,
     * if there are some, otherwise null. This method is better than
     * Throwable.getCause(Throwable) in following legacy exception chaining,
@@ -91,15 +91,45 @@ public class Util {
 		}
 		return result;
 	}
+    
+    /** Gets the maximum recursion depth as specified in method {@link #setMaxRecursionDepth(int)}.
+     * @since MulTEx 8.3 as of 2011-03-25 */
+    public static final int getMaxRecursionDepth(){
+        return _maxRecursionDepth;
+    }
+        
+    /** Sets the maximum depth to follow an exception chain, when calling recursively method {@link #getCause(Throwable)}.
+     * Will be used by {@link Util#_appendCompactStackTraceRecursively(StringBuffer, Throwable, StackTraceElement[], int)}, 
+     * {@link MsgText#_appendMessageTreeRecursively(StringBuffer, Throwable, java.util.ResourceBundle, String, int)}
+     * and should be respected by everyone following an exception chain by calling method {@link #getCause(Throwable)}.
+     * @param maxRecursionDepth May range from 5 to 100. Default is 10.
+     * @throws IllegalArgumentException argument outside of range 5...100
+     * @since 8.3 as of 2011-03-25
+    */
+    public static void setMaxRecursionDepth(final int maxRecursionDepth) throws IllegalArgumentException {
+        if(maxRecursionDepth<5 || maxRecursionDepth>100){
+            throw new IllegalArgumentException(Util.class.getName() + ".setMaxRecursionDepth allows only integers from 5 to 100");
+        }
+        _maxRecursionDepth = maxRecursionDepth;
+    }
+    
+    /** @since MulTEx 8.3 as of 2011-03-25 */
+    private static int _maxRecursionDepth = 10;
 
 	/** Result: The directly causing Throwable of i_throwable,
     * if there is one, otherwise null. This method is better than
     * Throwable.getCause(Throwable) in following legacy exception chaining,
     * as it uses the {@link ReflectionCauseGetter}
     * by default. You can replace the cause getter by method {@link #setCauseGetter}.
+    * Tries to avoid a cause cycle by returning null, if a direct cycle is detected.
     */
     public final static Throwable getCause(final Throwable i_throwable){
-      return _causeGetter.getCause(i_throwable);
+      final Throwable result = _causeGetter.getCause(i_throwable);
+      if(result==null || result.getCause()==i_throwable){ 
+          //result is a wrapper for i_throwable, but not its cause.
+          return null;
+      }
+      return result;
     }
 
     /**Returns true, if class java.lang.Throwable has an operation getCause() in this Java Runtime Environment*/
@@ -215,7 +245,7 @@ public class Util {
     interface layer (Marking the named form field as erroneous, and issuing
     its error message).
     */
-    public static Throwable getContainedException(
+    public static Throwable getContainedException_Old(
         final Throwable i_throwableChain, final Class i_expectedThrowableClass
     ){
         for(Throwable result = i_throwableChain;;){
@@ -225,15 +255,58 @@ public class Util {
             result = cause;
         }
     }
-
-
+    
+    /**Returns the upmost exception in i_throwableChain, which is of class
+    i_expectedThrowableClass, helpwise null.
+    Usage e.g. for a FieldValueExc, which is thrown
+    from the business logic layer to the user interface layer, wrapped some
+    times on this way, but should trigger a uniform reaction on the user
+    interface layer (Marking the named form field as erroneous, and issuing
+    its error message).
+    @return {@link #INFINITE_EXCEPTION_CHAIN} if the exception chain to be followed is longer than {@link #getMaxRecursionDepth()}.
+      @see #setMaxRecursionDepth(int)
+    */
+    public static Throwable getContainedException(
+        final Throwable i_throwableChain, final Class i_expectedThrowableClass
+    ){
+        Throwable result = i_throwableChain;
+        for(int i=1; i<=_maxRecursionDepth; i++){
+            if(result==null){return result;}
+            if(i_expectedThrowableClass.isInstance(result)){return result;}
+            final Throwable cause = Util.getCause(result);
+            result = cause;
+        }
+        return INFINITE_EXCEPTION_CHAIN;
+    }
+    
+    /**This exception indicates, that there is probably a cycle in an exception chain.*/
+    public static final class InfiniteExceptionChain extends Exception {
+        @Override public String getMessage() {
+            return "Probably cycle in exception chain. Exceeding maximum causal recursion depth of " + _maxRecursionDepth;
+        }
+    }
+    /**Reusable instance*/
+    public static final InfiniteExceptionChain INFINITE_EXCEPTION_CHAIN = new InfiniteExceptionChain();
 
     /**Result: The deepest Throwable object, which indirectly caused the
       program to throw i_throwable, if there is one, otherwise i_throwable
       itself. If i_throwable is null, the result will be null, too.
+    @return {@link #INFINITE_EXCEPTION_CHAIN} if the exception chain to be followed is longer than {@link #getMaxRecursionDepth()}.
       @see #getCause(Throwable)
+      @see #setMaxRecursionDepth(int)
     */
     public final static Throwable getOriginalException(final Throwable i_throwable){
+        if(i_throwable==null){return null;}
+        Throwable result = i_throwable;
+        for(int i=1; i<=_maxRecursionDepth; i++){
+            final Throwable cause = Util.getCause(result);
+            if(cause==null){return result;}
+            result = cause;
+        }
+        return INFINITE_EXCEPTION_CHAIN;
+    }
+    
+    public final static Throwable getOriginalException_Old(final Throwable i_throwable){
         if(i_throwable==null){return null;}
         for(Throwable result = i_throwable;;){
             final Throwable cause = Util.getCause(result);
@@ -355,8 +428,8 @@ public class Util {
 
 
 
-    /**Appends the stack trace of i_throwable and all its chained cause exceptions
-      to io_buffer. All redundant location lines therein are suppressed.
+    /**Appends the stack trace of i_reportee and all its chained cause exceptions
+      to io_destination. All redundant location lines therein are suppressed.
       Usually you should not directly call this method, but a printStackTrace-method in
       class Msg.
      * @param level TODO
@@ -371,6 +444,13 @@ public class Util {
         final StackTraceElement[] i_causeeElements, 
 		final int level
     ){
+        if(level >= _maxRecursionDepth){
+            io_destination.append("... SEVERE: Exceeding maximum causal recursion depth of ");
+            io_destination.append(_maxRecursionDepth);
+            io_destination.append(".");
+            io_destination.append(Util.lineSeparator);
+            return;
+        }
         final Throwable directCause = Util.getCause(i_reportee);
         final StackTraceElement[] reporteeElements = i_reportee.getStackTrace();
 
@@ -636,8 +716,7 @@ public class Util {
 	public static final char causeIndenter = '+';
 	
 	/**The demonstration of action ''{0}'' failed by fault of person {1}.
-	 * We will criticize him.
-	 * @multex.message The demonstration of action {0} failed by fault of person {1}.*/ 
+	 * We will criticize him.*/ 
 	public static final class MyDemoExc extends Exc {
 
 		/**Constructor.*/

@@ -1,88 +1,79 @@
 package multex; //Jdk1_4StackTraceTest.java
 
-
 //2002-07-02  Knabe  Creation
+
+import org.junit.Test;
+import multex.test.MultexAssert;
 
 /**JUnit batch test driver for Throwable.getStackTrace() and the reporting of a
  * stack trace of an exception chain by class multex.Failure.
   Compilable and useful only from JDK 1.4.
 */
-public class Jdk1_4StackTraceTest extends junit.framework.TestCase {
+public class Jdk1_4StackTraceTest extends MultexAssert {
 
 
+    private static final int _baseLineNumber = 15; //Must equal to this line number!!! 
 	private NullPointerException _createNullPointerException() {
-		return new NullPointerException("BBB"); //Leave at line 14!
+		return new NullPointerException("BBB"); //Leave at this location!!!
 	}
-	private final Exception _lowExc = _createNullPointerException(); //Leave at line 16!
-	private final Throwable _topExc = new org.xml.sax.SAXException("AAA", _lowExc); //Leave at line 17!
+	private final Exception _lowExc = _createNullPointerException(); //Leave at this location!!!
+	private final Throwable _topExc = new org.xml.sax.SAXException("AAA", _lowExc); //Leave at this location!!!
 
-	//Verwaltungsoperationen:
+    private static final int _npeLineNumber = _baseLineNumber + 2;
+    private static final int _lowExcLineNumber = _npeLineNumber + 2;
+    private static final int _topExcLineNumber = _lowExcLineNumber + 1;
 	
-	public Jdk1_4StackTraceTest(final String name) {
-	  super(name);
-	}
-	public static void main (final String[] i_args) {
-	  junit.textui.TestRunner.run(suite());
-	}
-	public static junit.framework.Test suite() {
-	  return new junit.framework.TestSuite(Jdk1_4StackTraceTest.class);
-	}
-	
-	//Einzelne Testschritte:
-	
-	
-	/**Tests getting the stack trace of a low and a top exception and prints them.
-	*/
+	/** Tests getting the stack trace of a low and a top exception and prints them. */
 	public void _testGetStackTrace(){
 		_printStackTraceWithoutExceptionInfo("\nStack trace of top exception is:", _topExc);
 		_printStackTraceWithoutExceptionInfo("\nStack trace of low exception is:", _lowExc);
 		_logMsgPrintStackTrace();
 	}
 	
-	/**Logs the stack trace of _topExc.*/
+	/** Logs the stack trace of _topExc. */
 	private void _logMsgPrintStackTrace() {
 		System.err.println("\nMsg.printStackTrace(_topExc) prints:");
 		Msg.printStackTrace(_topExc);		
 	}
 	
-	public void testAppendIrredundantTraceLines(){
+	@Test public void appendIrredundantTraceLines(){
 		final StackTraceElement[] lowTrace = _lowExc.getStackTrace();
 		final StackTraceElement[] topTrace = _topExc.getStackTrace();
 		final StringBuffer buf = new StringBuffer();
 		
 		Util.appendIrredundantTraceLines(buf, lowTrace, topTrace);
 		assertEquals(
-			"\tat multex.Jdk1_4StackTraceTest._createNullPointerException(Jdk1_4StackTraceTest.java:14)"
+			"\tat multex.Jdk1_4StackTraceTest._createNullPointerException(Jdk1_4StackTraceTest.java:" + _npeLineNumber + ")"
 			+ Util.lineSeparator
-			+ "\tat multex.Jdk1_4StackTraceTest.<init>(Jdk1_4StackTraceTest.java:16)"
+			+ "\tat multex.Jdk1_4StackTraceTest.<init>(Jdk1_4StackTraceTest.java:" + _lowExcLineNumber + ")"
 			+ Util.lineSeparator
 			,
 			buf.toString()
 		);
 	}
 	
-	public void testMsgPrintStackTrace(){
+	@Test public void msgPrintStackTrace(){
 		final StringBuffer buf = new StringBuffer();
 		Msg.printStackTrace(buf, _lowExc);
 		final String lowExcTraceStart = "java.lang.NullPointerException: BBB" + Util.lineSeparator
-			+ "\tat multex.Jdk1_4StackTraceTest._createNullPointerException(Jdk1_4StackTraceTest.java:14)"
+			+ "\tat multex.Jdk1_4StackTraceTest._createNullPointerException(Jdk1_4StackTraceTest.java:" + _npeLineNumber + ")"
 			+ Util.lineSeparator
-			+ "\tat multex.Jdk1_4StackTraceTest.<init>(Jdk1_4StackTraceTest.java:16)"
+			+ "\tat multex.Jdk1_4StackTraceTest.<init>(Jdk1_4StackTraceTest.java:" + _lowExcLineNumber + ")"
 			+ Util.lineSeparator
 		;
-		multex.test.TestUtil.assertIsStart(
+		assertIsStart(
 			lowExcTraceStart + "\tat "
 			, buf.toString()
 		);
 		
 		buf.setLength(0);
 		Msg.printStackTrace(buf, _topExc);
-		multex.test.TestUtil.assertIsStart( ""
+		assertIsStart( ""
 			+ Util.causeIndenter
 			+ lowExcTraceStart 
 			+ Util.wasCausing + Util.lineSeparator
 			+ "org.xml.sax.SAXException: AAA; Caused by: java.lang.NullPointerException: BBB" + Util.lineSeparator
-			+ "\tat multex.Jdk1_4StackTraceTest.<init>(Jdk1_4StackTraceTest.java:17)"
+			+ "\tat multex.Jdk1_4StackTraceTest.<init>(Jdk1_4StackTraceTest.java:" + _topExcLineNumber + ")"
 			+ Util.lineSeparator + "\tat "
 			, buf.toString()
 		);
