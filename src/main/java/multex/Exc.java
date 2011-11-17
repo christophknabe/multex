@@ -18,7 +18,7 @@ import java.util.Collection;
 //2000-06-29  Knabe  _cause gets type Exception rather than Throwable
 //2000-06-19  Knabe  printStackTrace() bei Ursachenkette ohne Ausgabe
 //                   von redundanten Zeilen.
-//2000-06-12  Knabe  alle printStackTrace(...) über printStackTrace(PrintWriter)
+//2000-06-12  Knabe  all printStackTrace(...) variants implemented by printStackTrace(PrintWriter)
 //1999-03-23  Knabe  Parametrierung wie in Java-Tutorial/i18n/format
 //1999-03-12  Knabe  NEU: causingThrowable()
 //1999-01-14  Knabe  erstellt

@@ -10,7 +10,7 @@ import java.util.ListResourceBundle;
  */
 public class MsgTextResourceBundle extends ListResourceBundle {
 	public static final String classCastExceptionText 
-	= "Typumwandlung nicht möglich von Objekt dieser Klasse";
+	= "Typumwandlung nicht moeglich von Objekt dieser Klasse";
 	
 	public static final String wertText = "Man kann mit Wert ";
 	public static final String objektText = " nicht Objekt "; 

@@ -13,14 +13,14 @@
       <surname>Knabe</surname>
 
       <affiliation>
-        <shortaffil>TFH Berlin</shortaffil>
+        <shortaffil>BHT Berlin</shortaffil>
 
-        <orgname class="nonprofit">- University of Applied Sciences
+        <orgname class="nonprofit">- Beuth University of Applied Sciences Berlin
         -</orgname>
       </affiliation>
     </author>
 
-    <pubdate>2008-01-11</pubdate>
+    <pubdate>2011-11-08</pubdate>
   </articleinfo>
 
   <para>The main goal of this user's guide is to tell, how to quickly
@@ -89,8 +89,8 @@
         multex.Msg.printReport(e);
     }
 }</programlisting>This will report to <varname>System.err</varname> the
-      exception chain messages using for localization the resource bundle
-      <filename>MsgText</filename> in the actual working directory, followed
+      exception chain/tree messages using for localization the resource bundle
+      <filename>MsgText</filename> in the current working directory, followed
       by the stack trace. If you want to use another resource bundle for
       localization, then use the variant <programlisting>printReport(StringBuffer, Throwable, ResourceBundle)</programlisting>instead,
       and print out the filled <classname>StringBuffer</classname>,
@@ -105,9 +105,9 @@
       <para>In a Java Swing application, you should report all exceptions by a
       variant of the static <methodname>multex.Swing.report</methodname>
       methods. These report firstly a window with the messages of the
-      exception causal chain. Then pressing on the button
+      exception causal chain/tree. Then pressing on the button
       <command>Details</command> will expand the dialog and show the stack
-      trace of the exception chain, too.</para>
+      traces of the exception chain/tree, too.</para>
 
       <para>Usually the variant of method
       <methodname>multex.Swing.report</methodname> with an owner component
@@ -590,7 +590,7 @@ multex.MsgText.causeMarker = Ursache:
         classpathref="compile.classpath"
         doclet="multex.tool.ExceptionMessagesDoclet"
         docletpathref="compile.classpath"
-        source="1.5"
+        source="1.6"
         useexternalfile="yes"
         encoding="ISO-8859-1"
     &gt;

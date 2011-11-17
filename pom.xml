@@ -12,9 +12,10 @@
   <groupId>de.tfh-berlin.knabe</groupId>
   <artifactId>multex</artifactId>
   <!-- Indicate version as m.n-SNAPSHOT during development, and finally before release as m.n ! -->
-  <version>8.3-SNAPSHOT</version>
-  <!-- 8.3 is in development since 2011-03-23: Goal remove StackOverflowError when following Util.getCause. Produced on Java 1.6 -->
-  <!-- 8.2 was the last released version on 2009-10-22 -->
+  <version>8.3</version>
+  <!-- 8.4 is in development since ???: Goal ??? -->
+  <!-- 8.3 was the last released version on 2011-11-08: Removes StackOverflowError when following Util.getCause. Produced on and for Java 1.6 -->
+  <!-- 8.2 was released on 2009-10-22 -->
   <!-- 8.1 was released on 2008-12-08 -->
   <!-- 8.0 was released on 2008-01-11 -->
   <!-- 7.3 was released on 2007-09-20 -->
@@ -23,6 +24,7 @@
   <properties>
     <!-- Source and .properties file encoding: -->
     <project.build.sourceEncoding>ISO-8859-1</project.build.sourceEncoding>
+    <project.reporting.outputEncoding>ISO-8859-1</project.reporting.outputEncoding>
   </properties>  
   <dependencies>
     <dependency>
@@ -40,6 +42,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-source-plugin</artifactId>
+        <version>2.1.2</version>
         <configuration>
           <attach>true</attach>
         </configuration>       
@@ -55,13 +58,14 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
         <configuration>
-          <source>1.5</source>
-          <target>1.5</target>
+          <source>1.6</source>
+          <target>1.6</target>
         </configuration>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-javadoc-plugin</artifactId>      
+        <version>2.8</version>
         <executions>
           <execution>
             <goals>
@@ -72,7 +76,8 @@
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-eclipse-plugin</artifactId>
+        <artifactId>maven-eclipse-plugin</artifactId>   
+        <version>2.8</version>
         <configuration>
           <downloadSources>true</downloadSources>
           <eclipse.useProjectReferences>false</eclipse.useProjectReferences>

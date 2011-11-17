@@ -13,7 +13,7 @@ import java.util.ResourceBundle;
 //2000-12-13  Knabe  report-Methods renamed to get/print-Messages
 //2000-10-25  Knabe  Reporting onto screen relocated into class multex.Awt
 //2000-07-07  Knabe  Meldungstext holen+formatieren verlagert in Klasse MsgText
-//2000-07-04  Knabe  report mit Varianten für Print-Writer/Stream
+//2000-07-04  Knabe  report with variants for Print-Writer/Stream
 //1999-03-23  Knabe  Parametrierung wie in Java-Tutorial/i18n/format
 //1999-03-18  Knabe  erstellt
 

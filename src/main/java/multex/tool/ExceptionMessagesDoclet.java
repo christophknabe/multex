@@ -132,7 +132,7 @@ public class ExceptionMessagesDoclet {
      * @throws IOException */
     private void _visitClass(final ClassDoc classDoc) throws TooNestedThrowableException, IOException{
         _printMessageTextPatternOfThrowable(classDoc);
-        /*Rekursion anscheinend unnötig!
+        /*It seems that recursion is not necessary!
         final ClassDoc[] innerClasses = classDoc.innerClasses();
         for(int i = 0; i < innerClasses.length; ++i){
             final ClassDoc innerClassDoc = innerClasses[i];

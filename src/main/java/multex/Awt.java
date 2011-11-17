@@ -11,7 +11,7 @@ import java.awt.EventQueue;
 //                   new methods reportNonmodally(...)
 //2000-10-25  Knabe  Extracted from class multex.Msg
 //2000-07-17  Knabe  Auch report(Applet, Throwable)
-//2000-07-11  Knabe  Button "Show Stack Trace" verschwindet nach Betätigung
+//2000-07-11  Knabe  Button "Show Stack Trace" disappears after clicking it
 //2000-06-28  Knabe  Zeilenanzahl der TextArea aus ihrem Inhalt ermitteln
 //2000-06-21  Knabe  Auch Anzeige des Stack Trace im Meldungsfenster
 //2000-05-23  Knabe  Erweitert um Dialog als owner
@@ -159,11 +159,11 @@ private static class Dialog {
     //Button "OK":
     final java.awt.Button okButton
     = new java.awt.Button(" O  K ");
-    //okButton.setBackground(java.awt.Color.white); //???nur für FensterFoto
+    //okButton.setBackground(java.awt.Color.white); //???only for screenshot
     //Button "Show Stack Trace":
     final java.awt.Button traceButton
     = new java.awt.Button("Show Stack Trace");
-    //traceButton.setBackground(java.awt.Color.white); //???nur für FensterFoto
+    //traceButton.setBackground(java.awt.Color.white); //???only for screenshot
     //buttonPanel:
     final java.awt.Panel buttonPanel
     = new java.awt.Panel(new java.awt.BorderLayout());
@@ -221,7 +221,7 @@ private static class Dialog {
     final java.awt.Toolkit toolkit = _dialog.getToolkit();
     toolkit.beep();
 
-    //Testweise eingefügt 01-06-28:
+    //For test purposes 01-06-28:
     //_printParents(okButton);
   }//_initialize()
         

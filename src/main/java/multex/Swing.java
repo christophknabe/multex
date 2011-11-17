@@ -127,12 +127,12 @@ public class Swing {
 
 	    //Button "OK":
 	    final JButton okButton = new JButton(" O  K ");
-	    //okButton.setBackground(java.awt.Color.white); //???nur für FensterFoto
+	    //okButton.setBackground(java.awt.Color.white); //???only for screenshot
 	    okButton.requestDefaultFocus();
 	    //Button "Show Stack Trace":
 	    final JButton traceButton = new JButton("Show Stack Trace");
 	    traceButton.requestDefaultFocus();
-	    //traceButton.setBackground(java.awt.Color.white); //???nur für FensterFoto
+	    //traceButton.setBackground(java.awt.Color.white); //???only for screenshot
 	    //buttonPanel:
 
 	    traceButton.setNextFocusableComponent(okButton);
@@ -195,7 +195,7 @@ public class Swing {
 
 	    final java.awt.Toolkit toolkit = _dialog.getToolkit();
 	    toolkit.beep();
-	    //Testweise eingefügt 01-06-28:
+	    //For test purposes 01-06-28:
 	    //_printParents(okButton);
 	  }//_initialize()
 

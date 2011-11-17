@@ -54,7 +54,7 @@ The plans are ordered by priority (most important as No. 1)
 <A name="versionHistory"/>
 <H2>Version history</H2><UL>
 
-  <li>8.3 of 2011-04-05: Compiled and runs on Java 6. 
+  <li>8.3 of 2011-11-08: Compiled and runs on Java 6. 
     Class {@link multex.Util} has a new method {@link multex.Util#setMaxRecursionDepth(int)}.
     The lower level utility method {@link multex.Util#getCause(Throwable)}
     automatically uses the value configured by {@link multex.Util#setMaxRecursionDepth(int)}.
