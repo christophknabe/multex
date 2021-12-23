@@ -15,18 +15,12 @@ import org.xml.sax.SAXException;
 //2003-05-08  Knabe  Modified from MsgTest
 //2002-05-30  Knabe  Created from Stack_bt following example junit.samples.VectorTest
 
-/** JUnit batch test driver for the class multex.MsgText */
+/** JUnit test driver for the class {@link MsgText} */
 public class MsgTextTest extends Assert {
-
-
-private static final Class _myClass = MsgTextTest.class;
 
 private static final String    _ex2Par = "MyClass";
 private static final Exception _ex2    = new ClassCastException(_ex2Par);
-private static final String    _ex2Name = "java.lang.ClassCastException";
 private static final Exception _ex1 = new multex.test.InitFailure(_ex2, "OOO", 9999);
-private static final String    _ex1Name = "multex.test.InitFailure";
-private static final String ursachenMarkierer = "CAUSE: ";
 
 @Test public void getMessageTextPattern_withoutAnyTexts(){
 	final Throwable ex1 = NotextException3Chain.construct();
@@ -158,20 +152,19 @@ private static final String ursachenMarkierer = "CAUSE: ";
 	final String illegalArgumentExceptionString = Util.toString(illegalArgumentException);
 	assertEquals("java.lang.IllegalArgumentException: 99", illegalArgumentExceptionString);
 	assertEquals(illegalArgumentException.toString(), illegalArgumentExceptionString);
-
 	
-	//If SAXException has a causing exception, it unfortunately suppresses
+	//If SAXException had a causing exception in SAX 1.0, it unfortunately suppressed
 	//its own class name and detailMessage.  This strange behaviour is documented here:
 	final SAXException saxException = new SAXException("BBB", illegalArgumentException);
+	final String saxExceptionString = "org.xml.sax.SAXException: BBB\njava.lang.IllegalArgumentException: 99";
 	assertEquals(
-		"java.lang.IllegalArgumentException: 99",
+		saxExceptionString,
 		saxException.toString()
 	);
 
 	//Thus as a rule they should be 
 	//included in the toString(), if no already by itself:
-	final String saxExceptionString = Util.toString(saxException);
-	assertEquals("org.xml.sax.SAXException: BBB; Caused by: java.lang.IllegalArgumentException: 99", saxExceptionString);
+	assertEquals(saxExceptionString, Util.toString(saxException));
 }
 
 @Test public void formatWithLocales(){

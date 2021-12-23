@@ -30,7 +30,8 @@ public class AssertionFailure extends multex.Failure {
   }
 
   /**Creates an AssertionFailure object without parameters.
-    @see #AssertionFailure(String, Object...)
+   * @param i_name The condition, which failed, as a String
+   * @see #AssertionFailure(String, Object...)
   */
   public AssertionFailure(final String i_name){this(i_name,(Object[])null);}
 

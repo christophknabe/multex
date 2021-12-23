@@ -121,7 +121,7 @@ public void printMessages_ofExcWithSystemOrMultexCause(){
 	final String result1 = buf1.toString();
 
 	final StringBuffer buf2 = new StringBuffer("2) ");
-	Msg.printMessages(buf2, topExc1);
+	Msg.printMessages(buf2, topExc2);
 	final String result2 = buf1.toString();
 
 	assertLongStringEquals(

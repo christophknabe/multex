@@ -137,7 +137,7 @@ private void _testGetParameters_isCopy(final MultexException i_exception) /*thro
  * @param message
  * @param pe
  */
-private void _checkContent(final MultexException me, final String message, final List pe) {
+private void _checkContent(final MultexException me, final String message, final List<Object> pe) {
 	assertEquals(message, me.getDefaultMessageTextPattern());
 	//assertEquals(cause, me.getCause());
 	final Object[] pa = me.getParameters();

@@ -40,6 +40,8 @@ public static void check(
 }//check
 
 /**Convenience check method without parameters.
+  @param i_condition The condition, which must be true.
+  @param i_name The condition, which failed, as a String.
   @see #check(boolean, String, Object...)
 */
 public static void check(

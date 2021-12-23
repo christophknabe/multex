@@ -39,6 +39,8 @@ public class Swing {
 
 	/**Reports i_throwable into a Swing dialog with static internationalization.
 	     For details see {@link Awt#report(Component, Throwable, ResourceBundle)}.
+	    @param io_ownerHook The AWT component which shall own the shown error dialog
+	    @param i_throwable The {@link Throwable} to be reported
 	*/
 	public static void report(
 	  final java.awt.Component io_ownerHook, final Throwable i_throwable
@@ -56,6 +58,9 @@ public class Swing {
 	    private void _report(Throwable e){Swing.report(this,e,null);}
 	    </PRE>, which will be called from each catch-clause in the event listeners
 	    and adds the actual GUI class as the owner of the message dialog.
+	    @param io_ownerHook The AWT component which shall own the shown error dialog
+	    @param i_throwable The {@link Throwable} to be reported
+	    @param i_resourceBundle The ResourceBundle to be used for getting the message texts for i_throwable  
     */
     public static void report(
       final java.awt.Component io_ownerHook, final Throwable i_throwable, 

@@ -68,11 +68,13 @@ public class Jdk1_4StackTraceTest extends MultexAssert {
 		
 		buf.setLength(0);
 		Msg.printStackTrace(buf, _topExc);
+		System.out.println("multex.Jdk1_4StackTraceTest.msgPrintStackTrace:");
+		System.out.println(buf);
 		assertIsStart( ""
 			+ Util.causeIndenter
 			+ lowExcTraceStart 
 			+ Util.wasCausing + Util.lineSeparator
-			+ "org.xml.sax.SAXException: AAA; Caused by: java.lang.NullPointerException: BBB" + Util.lineSeparator
+			+ "org.xml.sax.SAXException: AAA" + Util.lineSeparator + "java.lang.NullPointerException: BBB" + Util.lineSeparator
 			+ "\tat multex.Jdk1_4StackTraceTest.<init>(Jdk1_4StackTraceTest.java:" + _topExcLineNumber + ")"
 			+ Util.lineSeparator + "\tat "
 			, buf.toString()

@@ -1,5 +1,6 @@
 package multex; //Failure.java
 
+import java.text.MessageFormat;
 import java.util.Collection;
 
 //Change History:
@@ -95,7 +96,7 @@ protected Failure(){
     _checkClass();
 }
 
-/**Usable as <A HREF="http://www.c2.com/cgi/wiki?ExceptionTunneling">Tunneling Exception</A>.
+/**Usable as <a href="http://www.c2.com/cgi/wiki?ExceptionTunneling">Tunneling Exception</a>.
  * When reporting the message chain, instances of multex.Failure
  * without any own information, will be suppressed by method
  * {@link Msg#printMessages(StringBuffer,Throwable,ResourceBundle)} and
@@ -103,6 +104,9 @@ protected Failure(){
  *
  * This is a convenience constructor with only a cause, but
  * null for both i_defaultMessageTextPattern, and i_parameters.
+ * 
+ * @param i_cause The causing Throwable object for providing the diagnostics causer chain.
+ *                 null is allowed here, if no cause is available or necessary.
  *
   @see #Failure(String, Throwable, Object[])
 */
@@ -111,9 +115,9 @@ public Failure(final Throwable i_cause){
 }
 
 /**Constructs a Failure with only a default message text pattern.
- * 
-  @see #Failure(String, Throwable, Object...])
-  @since MulTEx 7.1 at 2006-11-04
+ * @param i_defaultMessageTextPattern The default message text pattern in the syntax of {@link MessageFormat}
+ * @since MulTEx 7.1 at 2006-11-04
+ * @see #Failure(String, Throwable, Object...)
 */
 public Failure(
   final String i_defaultMessageTextPattern
@@ -122,6 +126,9 @@ public Failure(
 }
 
 /**Constructs a Failure with a default message text pattern, and a cause, but without parameters.
+ * @param i_defaultMessageTextPattern The default message text pattern in the syntax of {@link MessageFormat}
+ * @param i_cause The causing Throwable object for providing the diagnostics causer chain.
+ *                 null is allowed here, if no cause is available or necessary.
   @see #Failure(String, Throwable, Object...)
 */
 public Failure(
@@ -131,12 +138,14 @@ public Failure(
 }
 
 /**Convenience constructor with parameters as Collection.
- * You can use this as a List Failure, passing collected Throwables to i_parameters.
+ * You can use this as a List Failure, passing a collection of {@link Throwable} objects to i_parameters.
+ * @param i_defaultMessageTextPattern The default message text pattern in the syntax of {@link MessageFormat}
+ * @param i_parameters Many parameters or causing {@link Throwable} objects to this failure
   @since MulTEx 7
   @see #Failure(String, Throwable, Object[])
 */
 public Failure(
-  final String i_defaultMessageTextPattern, /*final Throwable i_cause,*/ final Collection i_parameters
+  final String i_defaultMessageTextPattern, /*final Throwable i_cause,*/ final Collection<Object> i_parameters
 ){
   this(i_parameters.toArray(), i_defaultMessageTextPattern, (Throwable)null);
 }

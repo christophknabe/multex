@@ -5,7 +5,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.StringReader;
 import org.junit.Test;
-import org.junit.Assert;
 
 import multex.test.MultexAssert;
 
@@ -15,7 +14,7 @@ public class UtilTest extends MultexAssert {
 
 
     //Testfixtures:
-    private static final int _baseLineNumber = 18; //Must be the same as the line it stands on!!!
+    private static final int _baseLineNumber = 17; //Must be the same as the line it stands on!!!
 	private final Exc       t1  = new Exc("Kategorie nicht erlaubt");      //Leave at this line!
 	private final Throwable t21 = new FileNotFoundException("kasse.dat");  //Leave at line 17
 	private final Failure t2    = new Failure("Ziel nicht gefunden", t21); //Leave at line 18
@@ -24,8 +23,6 @@ public class UtilTest extends MultexAssert {
     private static final int _t21LineNumber = _t1LineNumber + 1;
     private static final int _t2LineNumber = _t21LineNumber + 1;
     private static final int _listExcLineNumber = _t2LineNumber + 1;
-
-	private final String className = UtilTest.class.getName();
 		  
 	/** Tests cloning an object array or null. */
 	@Test public void cloneObjectArray(){

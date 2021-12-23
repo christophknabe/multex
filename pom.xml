@@ -9,11 +9,14 @@
   <modelVersion>4.0.0</modelVersion>
   
   <!-- The Basics -->
-  <groupId>de.tfh-berlin.knabe</groupId>
+  <groupId>io.github.christophknabe</groupId>
   <artifactId>multex</artifactId>
   <!-- Indicate version as m.n-SNAPSHOT during development, and finally before release as m.n ! -->
-  <version>8.3</version>
-  <!-- 8.4 is in development since ???: Goal ??? -->
+  <version>8.4-SNAPSHOT</version>
+  <!-- 8.4 is the identical port of 8.3 to the github/Sonatype infrastructure for publishing it. 
+       Now with groupId io.github.christophknabe instead of former de.tfh-berlin.knabe 
+       and running on Java 8 instead of Java 6.
+  -->       
   <!-- 8.3 was the last released version on 2011-11-08: Removes StackOverflowError when following Util.getCause. Produced on and for Java 1.6 -->
   <!-- 8.2 was released on 2009-10-22 -->
   <!-- 8.1 was released on 2008-12-08 -->
@@ -25,20 +28,72 @@
     <!-- Source and .properties file encoding: -->
     <project.build.sourceEncoding>ISO-8859-1</project.build.sourceEncoding>
     <project.reporting.outputEncoding>ISO-8859-1</project.reporting.outputEncoding>
+    <tools.jar.path>${env.JAVA_HOME}/lib/tools.jar</tools.jar.path>
   </properties>  
   <dependencies>
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
-      <!-- Version sollte passend zur in der IDE benutzen Version sein! -->
+      <!-- Version should not have conflicts with the version used in the IDE! -->
       <version>4.5</version>
       <scope>test</scope>
+    </dependency>
+    <dependency>    
+      <!-- From local repo, previously installed by maven-install-plugin -->
+      <groupId>com.sun.jdk</groupId>
+      <artifactId>tools</artifactId>
+      <version>1.8</version>
     </dependency>
   </dependencies>
 
   <!-- Build Settings -->
   <build>
     <plugins>
+      <plugin>
+        <artifactId>maven-enforcer-plugin</artifactId>
+        <!--version>1.4.1</version-->
+        <version>3.0.0</version>
+        <executions>
+          <execution>
+            <id>enforce-license</id>
+            <goals>
+	          <goal>enforce</goal>
+            </goals>
+            <configuration>
+	          <rules>
+	            <requireFilesExist>
+	              <files>
+	                <file>${tools.jar.path}</file>
+	              </files>
+	              <message>Without ${tools.jar.path} the extraction of the exception message texts by JavaDoc cannot work.</message>
+	            </requireFilesExist>
+	          </rules>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-install-plugin</artifactId>
+        <version>2.5.1</version>
+        <configuration>
+          <groupId>com.sun.jdk</groupId>
+          <artifactId>tools</artifactId>
+          <version>1.8</version>
+          <packaging>jar</packaging>
+          <file>${tools.jar.path}</file>
+          <generatePom>true</generatePom>
+        </configuration>
+        <executions>
+          <execution>
+            <id>install-tools.jar</id>
+            <goals>
+              <goal>install-file</goal>
+            </goals>
+            <phase>validate</phase>
+          </execution>
+        </executions>
+      </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-source-plugin</artifactId>
@@ -57,15 +112,16 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.0</version>
         <configuration>
-          <source>1.6</source>
-          <target>1.6</target>
+          <source>1.8</source>
+          <target>1.8</target>
         </configuration>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-javadoc-plugin</artifactId>      
-        <version>2.8</version>
+        <artifactId>maven-javadoc-plugin</artifactId>  
+        <version>3.3.1</version>
         <executions>
           <execution>
             <goals>
@@ -91,6 +147,41 @@
         <version>1.0-beta-7</version>
       </extension>
     </extensions>
+    <pluginManagement>
+    	<plugins>
+    		<!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself.-->
+    		<plugin>
+    			<groupId>org.eclipse.m2e</groupId>
+    			<artifactId>lifecycle-mapping</artifactId>
+    			<version>1.0.0</version>
+    			<configuration>
+    				<lifecycleMappingMetadata>
+    					<pluginExecutions>
+    						<pluginExecution>
+    							<pluginExecutionFilter>
+    								<groupId>
+    									org.apache.maven.plugins
+    								</groupId>
+    								<artifactId>
+    									maven-install-plugin
+    								</artifactId>
+    								<versionRange>
+    									[2.5.1,)
+    								</versionRange>
+    								<goals>
+    									<goal>install-file</goal>
+    								</goals>
+    							</pluginExecutionFilter>
+    							<action>
+    								<ignore></ignore>
+    							</action>
+    						</pluginExecution>
+    					</pluginExecutions>
+    				</lifecycleMappingMetadata>
+    			</configuration>
+    		</plugin>
+    	</plugins>
+    </pluginManagement>
   </build>
   <reporting>
     <plugins>
@@ -174,7 +265,7 @@
   </reporting>
 
   <!-- More Project Information -->
-  <name>The Multi-Tier Exception Handling Framework (MulTEx ${version})</name>
+  <name>The Multi-Tier Exception Handling Framework (MulTEx ${project.version})</name>
   <description>MulTEx is a simple, but powerful framework for organizing exceptions
     and messages is a multi-tier Java software system.
 
@@ -241,15 +332,16 @@
     -->
   </pluginRepositories>
   <profiles>
-    <!-- Include tools.jar of Sun JRE -->  
+    <!-- Include tools.jar of Sun JRE 
     <profile>
-      <id>default-tools.jar</id>
+      <id>default-tools.jar</id> -->  
       <!-- Needed for the ExceptionMessagesDoclet, which collects the Javadoc texts of all exceptions to a .properties file. -->
+      <!-- 
       <activation>
-        <property>
-          <name>java.vendor</name>
-          <value>Sun Microsystems Inc.</value>
-        </property>
+        <activeByDefault>true</activeByDefault>
+          <file>
+            <exists>${java.home}/../lib/tools.jar</exists>
+          </file>
       </activation>
       <dependencies>
         <dependency>
@@ -257,10 +349,10 @@
           <artifactId>tools</artifactId>
           <version>6</version>
           <scope>system</scope>
-          <systemPath>${java.home}/../lib/tools.jar</systemPath>
-        </dependency>
+          <systemPath>${tools.jar.path}</systemPath>
+        </dependency> 
       </dependencies>
-    </profile>
+    </profile>  -->
   </profiles>
   
   <distributionManagement>
@@ -291,7 +383,6 @@
   </distributionManagement>
 
 </project>
-
 
       <!-- Unnecessary: Has been used for site upload. Now it works well with the site:deploy target. 2007-07-11 
       <plugin> 
