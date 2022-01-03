@@ -123,7 +123,9 @@ private class GetObjectAsCauseException extends Exception {
     public Object getReason(){return new Exception("should not use an Object getter");}
 }
 
-/**Checks, that i_causeChain contains the causes of i_head*/
+/**Checks, that i_causeChain contains the causes of i_head.
+ * @param i_head an exception with a cause chain
+ * @param i_causeChain the exceptions which should be the causes of i_head. */
 public static void checkCauseChain(final Throwable i_head, final Throwable[] i_causeChain){
   Throwable t=i_head;
   for(int i=0; i<i_causeChain.length; i++){

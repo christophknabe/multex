@@ -35,6 +35,7 @@ public static final String ex1Name = ex1.getClass().getName();
  * {@link multex.test.NotextException3Chain.MainFailure}, 
  * {@link multex.test.NotextException3Chain.MidFailure}, 
  * ClassCastException.
+ * @return the constructed exception chain
 */
 public static Throwable construct(){
 	return ex1;

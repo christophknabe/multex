@@ -247,24 +247,25 @@ public Exc initParameters(final Object... i_parameters){
  * @param i_parameters the parameters for the exception message
  * @since MulTEx 7.3 2007-09-18
  */
+@SuppressWarnings("unchecked")
 public static <E extends Exc> void throwMe(final Object... i_parameters) throws E {
-    Class c = null;
+    Class<?> c = null;
     final E e;
     try {
-        final Class[] callingClasses = securityManager.getCallingClasses();
+        final Class<?>[] callingClasses = securityManager.getCallingClasses();
         //final List<Class> callingClassesList = Arrays.asList(callingClasses);
         //System.out.println("Calling classes: " + callingClassesList);
         c = callingClasses[2];
         e = (E)c.newInstance();
         e._parameters = i_parameters;
     } catch (Exception cause) {
-        throw new RuntimeException("Cannot throw " + c, cause);
+        throw new Failure("Cannot throw " + c, cause, i_parameters);
     }
     throw e;
 }
 /**Purpose: Enabling access to a protected method of java.lang.SecurityManager.*/
 private static final class MySecurityManager extends SecurityManager {
-    public Class[] getCallingClasses(){
+    public Class<?>[] getCallingClasses(){
         return getClassContext();
     }
 }

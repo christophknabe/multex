@@ -259,7 +259,7 @@ public class Util {
       @see #setMaxRecursionDepth(int)
     */
     public static Throwable getContainedException(
-        final Throwable i_throwableChain, final Class i_expectedThrowableClass
+        final Throwable i_throwableChain, final Class<? extends Throwable> i_expectedThrowableClass
     ){
         Throwable result = i_throwableChain;
         for(int i=1; i<=_maxRecursionDepth; i++){
@@ -583,15 +583,15 @@ public class Util {
     }
 
     /**Reports to System.err, if the class of this exception object
-    does not satisfy the conditions: <UL>
-      <LI> end with i_suffix
-    </UL>
+    does not satisfy the conditions: <ul>
+      <li> end with i_suffix</li>
+    </ul>
     This checking should better occur statically before running a program
     and not dynamically each time an exception object is created.
     */
     /*package*/ static void checkClass(final Exception i_exception, final String i_suffix){
       //check, that class name ends with i_suffix:
-      final Class exceptionClass = i_exception.getClass();
+      final Class<? extends Exception> exceptionClass = i_exception.getClass();
       final String exceptionName = exceptionClass.getName();
       if(!exceptionName.endsWith(i_suffix)){
         printErrorString("The name of subclass ");

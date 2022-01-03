@@ -53,7 +53,7 @@ The plans are ordered by priority (most important as No. 1)
 <a name="versionHistory"></a>
 <H2>Version history</H2><UL>
 
-  <li>8.4 of 2021-12-23: Compiled and runs on Java 8. Maven artifact renamed to io.github.christophknabe:multex
+  <li>8.4 of 2022-01-03: Compiled and runs on Java 8. Maven artifact renamed to io.github.christophknabe:multex
   </li>
   <li>8.3 of 2011-11-08: Compiled and runs on Java 6. 
     Class {@link multex.Util} has a new method {@link multex.Util#setMaxRecursionDepth(int)}.

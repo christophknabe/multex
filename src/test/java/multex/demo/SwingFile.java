@@ -21,12 +21,12 @@ package multex.demo;  //SwingFile.java
 * interface for file handling {@link AwtFile}.
 *
 * Each exception occurring in an ActionListener of the user interface is
-* reported by calling <PRE><CODE>
+* reported by calling <pre>
 *    multex.Swing.report(ownerFrame, exception);
-*</PRE></CODE>
+*</pre>
 * Further description of the contents of the appearing message dialog
 * see class {@link AwtFile}.
-* The complete exception reports looks like: <PRE><CODE>
+* The complete exception reports looks like: <pre>
 *
 *File input could not be copied to output
 *CAUSE: java.io.FileNotFoundException: input (Das System kann die angegebene Datei nicht finden)
@@ -34,7 +34,7 @@ package multex.demo;  //SwingFile.java
 *----------Stack Trace follows:----------
 *java.io.FileNotFoundException: input (Das System kann die angegebene Datei nicht finden)
 *   at java.io.FileInputStream.open(Native Method)
-*   at java.io.FileInputStream.<init>(Unknown Source)
+*   at java.io.FileInputStream.&lt;init&gt;(Unknown Source)
 *   at File.copy(File.java:94)
 *WAS CAUSING:
 *File$CopyFailure: File {0} could not be copied to {1}
@@ -62,7 +62,7 @@ package multex.demo;  //SwingFile.java
 *   at java.awt.EventDispatchThread.pumpOneEvent(Unknown Source)
 *   at java.awt.EventDispatchThread.pumpEvents(Unknown Source)
 *   at java.awt.EventDispatchThread.run(Unknown Source)
-*</PRE></CODE>
+*</pre>
 */
 
 public class SwingFile implements java.awt.event.ActionListener {
@@ -75,7 +75,8 @@ public class SwingFile implements java.awt.event.ActionListener {
   private final javax.swing.JButton _copyButton = new javax.swing.JButton("Copy");
   private final javax.swing.JButton _moveButton = new javax.swing.JButton("Move");
 
-  /**Effect: Creates a Swing user interface for copying a file*/
+  /**Effect: Creates a Swing user interface for copying a file.
+   * @param i_args command line arguments (not used) */
   public static void main(final String[] i_args){
     new SwingFile();
   }//main

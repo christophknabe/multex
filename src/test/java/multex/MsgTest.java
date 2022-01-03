@@ -78,7 +78,7 @@ public class MsgTest extends MultexAssert {
 	);	
 }
 
-/** Tests printing the default messages for the exception chain {@link Exception3Chain}. */
+/** Tests printing the default messages for the exception chain {@link TextException3Chain}. */
 public void printMessages_defaultTextFromExceptionObject(){
 	final Throwable ex1 = TextException3Chain.construct();
 	_check_TextException3Chain_Messages(ex1);

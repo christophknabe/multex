@@ -43,7 +43,7 @@ public class ReflectionCauseGetter implements CauseGetter {
 	}
 
     //Start using reflection:
-    final Class throwableClass = i_throwable.getClass();
+    final Class<? extends Throwable> throwableClass = i_throwable.getClass();
 
     //Check for public get-methods returning a Throwable:
     try{
@@ -53,7 +53,7 @@ public class ReflectionCauseGetter implements CauseGetter {
         final java.lang.reflect.Method method = methods[i];
         final String methodName = method.getName();
         final int modifiers = method.getModifiers();
-        final Class[] parameterTypes = method.getParameterTypes();
+        final Class<?>[] parameterTypes = method.getParameterTypes();
         if(methodName.startsWith("get") && !methodName.equals("getCause")
           && Modifier.isPublic(modifiers)
           && !Modifier.isStatic(modifiers) && parameterTypes.length==0
@@ -76,7 +76,7 @@ public class ReflectionCauseGetter implements CauseGetter {
     final Throwable i_throwable, final java.lang.reflect.Method i_getCauseMethod
   ){
     try{
-        final Class returnType = i_getCauseMethod.getReturnType();
+        final Class<?> returnType = i_getCauseMethod.getReturnType();
         if(!Throwable.class.isAssignableFrom(returnType)){return null;}
         //Here returnType is a Throwable
         if(!i_getCauseMethod.isAccessible()){i_getCauseMethod.setAccessible(true);}

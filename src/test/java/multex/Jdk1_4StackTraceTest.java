@@ -53,8 +53,12 @@ public class Jdk1_4StackTraceTest extends MultexAssert {
 	}
 	
 	@Test public void msgPrintStackTrace(){
-		final StringBuffer buf = new StringBuffer();
-		Msg.printStackTrace(buf, _lowExc);
+		final String lowExcPrintedStackTrace;
+		{
+			final StringBuffer buf = new StringBuffer();
+			Msg.printStackTrace(buf, _lowExc);
+			lowExcPrintedStackTrace = buf.toString();
+		}
 		final String lowExcTraceStart = "java.lang.NullPointerException: BBB" + Util.lineSeparator
 			+ "\tat multex.Jdk1_4StackTraceTest._createNullPointerException(Jdk1_4StackTraceTest.java:" + _npeLineNumber + ")"
 			+ Util.lineSeparator
@@ -63,13 +67,17 @@ public class Jdk1_4StackTraceTest extends MultexAssert {
 		;
 		assertIsStart(
 			lowExcTraceStart + "\tat "
-			, buf.toString()
+			, lowExcPrintedStackTrace
 		);
 		
-		buf.setLength(0);
-		Msg.printStackTrace(buf, _topExc);
-		System.out.println("multex.Jdk1_4StackTraceTest.msgPrintStackTrace:");
-		System.out.println(buf);
+		final String topExcPrintedStackTrace;
+		{
+			final StringBuffer buf = new StringBuffer();
+			Msg.printStackTrace(buf, _topExc);
+			topExcPrintedStackTrace = buf.toString();
+		}
+		//System.out.println("multex.Jdk1_4StackTraceTest.msgPrintStackTrace:");
+		//System.out.println(buf);
 		assertIsStart( ""
 			+ Util.causeIndenter
 			+ lowExcTraceStart 
@@ -77,7 +85,7 @@ public class Jdk1_4StackTraceTest extends MultexAssert {
 			+ "org.xml.sax.SAXException: AAA" + Util.lineSeparator + "java.lang.NullPointerException: BBB" + Util.lineSeparator
 			+ "\tat multex.Jdk1_4StackTraceTest.<init>(Jdk1_4StackTraceTest.java:" + _topExcLineNumber + ")"
 			+ Util.lineSeparator + "\tat "
-			, buf.toString()
+			, topExcPrintedStackTrace
 		);
 	}
 	

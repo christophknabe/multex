@@ -120,9 +120,9 @@ public class UtilTest extends MultexAssert {
     }
     
     /**Tests appending only the irredundant trace elements.
-     * @throws IOException 
+     * @throws IOException {@link BufferedReader#readLine() failed}
      */
-    @Test public void succeedingAppendIrredundantTraceLinesOnJRE1_4() throws IOException{
+    @Test public void succeedingAppendIrredundantTraceLinesOnJRE1_4() throws IOException {
         final String traceString = captureStandardStackTrace(testException);
 
         //Test with i_causeeElements is null; must append the complete testTrace:
@@ -142,6 +142,7 @@ public class UtilTest extends MultexAssert {
         final String l1 = r.readLine();
         final String l2 = r.readLine();
         final String l3 = r.readLine();
+        r.close();
         final String expected = l1+Util.lineSeparator+l2+Util.lineSeparator+l3+Util.lineSeparator;
         assertEquals(expected, io_destination.toString());
     }
