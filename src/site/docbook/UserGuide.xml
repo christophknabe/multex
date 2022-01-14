@@ -5,24 +5,20 @@
 <article lang="en">
   <title>User's Guide for MulTEx - The Multi Tier Exception Handling
   Framework</title>
+  <subtitle>Software version <?eval ${project.version}?></subtitle>
 
   <articleinfo>
     <author>
       <firstname>Christoph</firstname>
-
       <surname>Knabe</surname>
-
       <affiliation>
         <shortaffil>BHT Berlin</shortaffil>
-
-        <orgname class="nonprofit">- Beuth University of Applied Sciences Berlin
-        -</orgname>
+        <orgname class="nonprofit">Berlin University of Applied Sciences and Technology</orgname>
       </affiliation>
     </author>
 
-    <pubdate>2011-11-08</pubdate>
+    <pubdate><?dbtimestamp format="Y-m-d"?></pubdate>
   </articleinfo>
-
   <para>The main goal of this user's guide is to tell, how to quickly
   introduce robust and diagnostic exception handling and reporting into a Java
   software system.</para>
@@ -69,7 +65,7 @@
     <section>
       <title>Reporting in Command Line Applications</title>
 
-      <para>In a Java application, invoked as a command line, you should
+      <para>In a Java application, invoked from the command line, you should
       report, both the exception's messages, and its stack trace, as the
       command line application typically does not have a button for requesting
       the details of the stack trace. The destination for the exception
@@ -140,7 +136,7 @@
 
         <para>See an example at the Central Exception Reporting Sample
         Application, site <ulink
-        url="http://excrep.berlios.de/">http://excrep.berlios.de/</ulink></para>
+        url="https://app.assembla.com/spaces/excrep/git/source">https://app.assembla.com/spaces/excrep/git/source</ulink></para>
 
         <!--End of reporting using a swing.AbstractAction-->
       </section>
@@ -154,9 +150,8 @@
         application, which occur during the execution of an UI-event-triggered
         action, it is sufficient to install one central exception handler
         using the undocumented system property
-        <varname>sun.awt.exception.handler</varname>, see more in a <ulink
-        url="http://www.jguru.com/faq/view.jsp?EID=427279">JGuru
-        discussion</ulink>.</para>
+        <varname>sun.awt.exception.handler</varname>, see more in <ulink
+        url="https://docs.oracle.com/javase/8/docs/technotes/guides/troubleshoot/awt001.html">Debug Tips for AWT</ulink>.</para>
 
         <para>This undocumented behaviour is wrapped by a MulTEx service. You
         can implement the interface
@@ -238,7 +233,7 @@
 
         <para>See an example at the Central Exception Reporting Sample
         Application, site <ulink
-        url="http://excrep.berlios.de/">http://excrep.berlios.de/</ulink></para>
+        url="https://app.assembla.com/spaces/excrep/git/source">https://app.assembla.com/spaces/excrep/git/source</ulink></para>
 
         <!--End of error page-->
       </section>
@@ -298,7 +293,7 @@
         in summer 2005.</para>
 
         <para>The JavaServer Faces life cycle (see <ulink
-        url="http://java.sun.com/j2ee/1.4/docs/tutorial/doc/images/jsfIntro-lifecycle.gif">http://java.sun.com/j2ee/1.4/docs/tutorial/doc/images/jsfIntro-lifecycle.gif</ulink>)
+        url="https://docs.oracle.com/javaee/7/tutorial/jsf-intro006.htm">https://docs.oracle.com/javaee/7/tutorial/jsf-intro006.htm</ulink>)
         is directed by an implementation of the interface
         <interfacename>Lifecycle</interfacename> (in the package
         <filename>javax.faces.lifecycle</filename>. The reference
@@ -503,8 +498,8 @@ public class MyLifecycleImpl extends com.sun.faces.lifecycle.LifecycleImpl {
       <para>You define the message text pattern for each concrete subclass of
       Throwable of which you have the source code. You place the text pattern
       as the main comment into the Javadoc comment of the exception class
-      before any @tags. So the text pattern serves firstly as documentation
-      for this exception, and secondly as text pattern for
+      before any @tags. So the text pattern serves both as documentation
+      for this exception, and as text pattern for
       internationalization.</para>
 
       <para>For example you could define an exception
@@ -618,8 +613,22 @@ multex.MsgText.causeMarker = Ursache:
         as <filename>.properties</filename> files must use it.
         </para>
 
-        <!--End of Example usage of the ExceptionMessagesDoclet-->
+        <!--End of Example usage of the ExceptionMessagesDoclet from ANT-->
       </section>
+      
+      <section>
+        <title>Example usage of the
+        <classname>ExceptionMessagesDoclet</classname> from Maven</title>
+
+        <para>This works very analogous to the ANT example. A complete example you can find in the file 
+          <ulink
+        url="https://github.com/christophknabe/spring-ddd-bank/blob/master/pom.xml">pom.xml of the Spring DDD Bank sample application</ulink>.
+        There look at the <ulink
+        url="https://github.com/christophknabe/spring-ddd-bank/blob/master/pom.xml#L97">configuration of the Maven Javadoc Plugin</ulink>.
+        </para>
+        <!--End of Example usage of the ExceptionMessagesDoclet from Maven-->
+      </section>
+      
 
       <!--End of How to declare a MulTEx exception-->
     </section>
@@ -693,7 +702,7 @@ class Account {
       message text.</para>
 
       <para>The first is, if the exception is a checked one, and you don't
-      want to specify it in the throws cause of your own method. Then the
+      want to specify it in the throws clause of your own method. Then the
       compiler forces you to catch it. In the catch branch you shoud usually
       wrap it.</para>
 
@@ -713,7 +722,8 @@ class SerialPort {
 
     ...
 
-    /**Opens the serial port with the given name and the other communication parameters.*/
+    /**Opens the serial port with the given name
+    * and the other communication parameters.*/
     public void open( 
         String portName, int baudRate, int databits, int stopbits, int parity 
     ) throws NameExc, OpenFailure {
@@ -777,7 +787,7 @@ class SerialPort {
 
       <para>For example we want to copy a list of files to a backup directory.
       Only if we succeed to copy every file, the whole method can be
-      considered successfull.</para>
+      considered successful.</para>
 
       <para>The first approach is<programlisting>    /**Copies all files from directory sourceDir to directory destDir.*/
     public static void copyFiles1(final File sourceDir, final File destDir){

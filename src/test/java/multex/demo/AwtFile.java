@@ -21,9 +21,9 @@ import multex.Awt;
 * command line file handling {@link File}.
 *
 * Each exception occurring in an ActionListener of the user interface is
-* reported by calling <PRE><CODE>
+* reported by calling <pre>
 *    multex.Awt.report(ownerFrame, exception);
-*</PRE></CODE>
+*</pre>
 *
 * into a pop up window including its causing exception
 * The message window contains a button "Show Stack Trace",
@@ -32,14 +32,14 @@ import multex.Awt;
 * After pressing this button the message window will contain e.g. the following
 * output:
 *
-*<code><pre>
+*<pre>
 *File input could not be copied to output
 *CAUSE: java.io.FileNotFoundException: input (Das System kann die angegebene Datei nicht finden)
 *
 *----------Stack Trace follows:----------
 *java.io.FileNotFoundException: input (Das System kann die angegebene Datei nicht finden)
 *   at java.io.FileInputStream.open(Native Method)
-*   at java.io.FileInputStream.<init>(Unknown Source)
+*   at java.io.FileInputStream.&lt;init&gt;(Unknown Source)
 *   at File.File(File.java:94)
 *WAS CAUSING:
 *File$FileFailure: File {0} could not be copied to {1}
@@ -54,7 +54,7 @@ import multex.Awt;
 *   at java.awt.EventDispatchThread.pumpOneEvent(Unknown Source)
 *   at java.awt.EventDispatchThread.pumpEvents(Unknown Source)
 *   at java.awt.EventDispatchThread.run(Unknown Source)
-*</pre></code>
+*</pre>
 */
 
 public class AwtFile implements java.awt.event.ActionListener {
@@ -68,7 +68,8 @@ public class AwtFile implements java.awt.event.ActionListener {
   private final java.awt.Button _copyButton = new java.awt.Button("Copy");
   private final java.awt.Button _moveButton = new java.awt.Button("Move");
 
-  /**Effect: Creates an AWT user interface for file operations copy,move*/
+  /**Effect: Creates an AWT user interface for file operations copy,move.
+   * @param i_args command line arguments (here ignored) */
   public static void main(final String[] i_args){
     new AwtFile();
   }//main

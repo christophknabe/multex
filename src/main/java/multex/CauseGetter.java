@@ -8,8 +8,9 @@ package multex; //CauseGetter.java
 */
 public interface CauseGetter {
     
-  /**Returns the causing Throwable object of an i_throwable other than Failure,
-    or null if not known
+  /**Returns the causing Throwable object of an i_throwable other than Failure.
+   * @param i_throwable The Throwable of which we want the cause
+   * @return the causing Throwable, or null if no cause was found
   */
   Throwable getCause(Throwable i_throwable);
   

@@ -56,6 +56,7 @@ private static final String _beep = "\u0007";
 
 
 /**Reports i_throwable and its chained causing exceptions to System.err
+  @param i_throwable The exception, which has to be reported along with its causal chain, must not be null.
   @see #printReport(StringBuffer,Throwable)
 */
 public static void printReport(final Throwable i_throwable){
@@ -63,7 +64,9 @@ public static void printReport(final Throwable i_throwable){
   System.err.print(_beep);
 }//printReport
 
-/**Reports i_throwable and its chained causing exceptions to io_destination
+/**Reports i_throwable and its chained causing exceptions to io_destination.
+  @param io_destination   Where to append the message chain, must not be null.
+  @param i_throwable      The exception, which has to be reported along with its causal chain, must not be null.
   @see #printReport(StringBuffer,Throwable)
 */
 public static void printReport(
@@ -73,7 +76,9 @@ public static void printReport(
   _flushPrint(io_destination, i_throwable, "REPORT");
 }//printReport
 
-/**Reports i_throwable and its chained causing exceptions to io_destination
+/**Reports i_throwable and its chained causing exceptions to io_destination.
+  @param io_destination   Where to append the message chain, must not be null.
+  @param i_throwable      The exception, which has to be reported along with its causal chain, must not be null.
   @see #printReport(StringBuffer,Throwable,ResourceBundle)
 */
 public static void printReport(
@@ -83,7 +88,9 @@ public static void printReport(
   _flushPrint(io_destination, i_throwable, "REPORT");
 }//printReport
 
-/**Reports i_throwable and its chained causing exceptions to io_destination
+/**Reports i_throwable and its chained causing exceptions to io_destination.
+  @param io_destination   Where to append the message chain, must not be null.
+  @param i_throwable      The exception, which has to be reported along with its causal chain, must not be null.
   @see #printReport(StringBuffer,Throwable,ResourceBundle)
 */
 public static void printReport(
@@ -124,8 +131,9 @@ public static void printReport(
 public static String stackTraceFollows
 = "----------Stack Trace follows:----------";
 
-/**Returns the report of i_throwable and its
-  chained causing exceptions.
+/**Returns the report of i_throwable and its chained causing exceptions.
+  @param i_throwable The exception, which has to be reported along with its causal chain, must not be null.
+  @return The report of i_throwable and its chained causing exceptions
   @see #printReport(StringBuffer,Throwable)
 */
 public static String getReport(final Throwable i_throwable){
@@ -135,7 +143,8 @@ public static String getReport(final Throwable i_throwable){
 }//getReport
 
 /**Reports the message texts of i_throwable and its
-  chained causing exceptions to System.err
+ * chained causing exceptions to {@link System#err}.
+ * @param i_throwable The {@link Throwable} for which the messages have to be printed 
   @see #printMessages(StringBuffer,Throwable)
 */
 public static void printMessages(final Throwable i_throwable){
@@ -144,6 +153,8 @@ public static void printMessages(final Throwable i_throwable){
 
 /**Reports the message texts of i_throwable and its
   chained causing exceptions to io_destination
+ * @param io_destination where to print the exception messages
+ * @param i_throwable The {@link Throwable} for which the messages have to be printed 
   @see #printMessages(StringBuffer,Throwable)
 */
 public static void printMessages(
@@ -154,6 +165,8 @@ public static void printMessages(
 
 /**Reports the message texts of i_throwable and its
   chained causing exceptions to io_destination
+ * @param io_destination where to print the exception messages
+ * @param i_throwable The {@link Throwable} for which the messages have to be printed 
   @see #printMessages(StringBuffer,Throwable)
 */
 public static void printMessages(
@@ -206,6 +219,8 @@ private static void checkPrintError(
 
 /**Returns the message texts of i_throwable and its
   chained causing exceptions.
+  @param i_throwable The exception, which has to be reported along with its causal chain, must not be null.
+  @return The combined messages
   @see #printMessages(StringBuffer,Throwable)
 */
 public static String getMessages(final Throwable i_throwable){
@@ -216,6 +231,8 @@ public static String getMessages(final Throwable i_throwable){
 
 /**Appends the message texts of i_throwable and its
   chained causing exceptions to io_destination using static internationalization.
+  @param io_destination   Where to append the message chain, must not be null.
+  @param i_throwable      The exception, which has to be reported along with its causal chain, must not be null.
   @see #printMessages(StringBuffer,Throwable,ResourceBundle)
 */
 public static void printMessages(
@@ -258,6 +275,7 @@ public static void printMessages(
 
 /**Prints the compactified stack trace of i_throwable and its
   chained causing Throwable exceptions to System.err.
+ * @param i_throwable The {@link Throwable} for which the stack trace has to be printed 
   @see #printStackTrace(StringBuffer,Throwable)
   */
 public static void printStackTrace(final Throwable i_throwable){
@@ -266,6 +284,8 @@ public static void printStackTrace(final Throwable i_throwable){
 
 /**Prints the compactified stack trace of i_throwable and its
   chained causing Throwable exceptions to io_destination.
+ * @param io_destination where to print the stack trace
+ * @param i_throwable The {@link Throwable} for which the stack trace has to be printed 
   @see #printStackTrace(StringBuffer,Throwable)
   */
 public static void printStackTrace(
@@ -276,6 +296,8 @@ public static void printStackTrace(
 
 /**Prints the compactified stack trace of i_throwable and its
   chained causing Throwable exceptions to io_destination.
+ * @param io_destination where to print the stack trace
+ * @param i_throwable The {@link Throwable} for which the stack trace has to be printed 
   @see #printStackTrace(StringBuffer,Throwable)
 */
 public static void printStackTrace(
@@ -285,7 +307,9 @@ public static void printStackTrace(
   io_destination.flush();
 }//printStackTrace
 
-/**Returns the compactified stack trace of i_throwable and its
+/**Returns the compactified stack trace of i_throwable
+ * @param i_throwable The {@link Throwable} for which the stack trace has to be compactified 
+ * @return The compactified stack trace of i_throwable and its
   chained causing Throwable exceptions.
   @see #printStackTrace(StringBuffer,Throwable)
 */

@@ -45,6 +45,8 @@ private static final String _className = Awt.class.getName();
 
 /**Reports i_throwable into an error message dialog with static internationalization.
      For details see @link #report(java.awt.Component, Throwable, ResourceBundle)}.
+	    @param io_ownerHook The AWT component which shall own the shown error dialog
+	    @param i_throwable The {@link Throwable} to be reported
 */
 public static void report(
   final java.awt.Component io_ownerHook, final Throwable i_throwable
@@ -53,25 +55,24 @@ public static void report(
 }
 
 /**Reports i_throwable into an AWT Dialog, detail description here.
-  <BR>Firstly reports the same as {@link Msg#printMessages(StringBuffer, Throwable, ResourceBundle)}
+  <br>Firstly reports the same as {@link Msg#printMessages(StringBuffer, Throwable, ResourceBundle)}
   into a pop-up window of appropriate size.
-  Accepting the message is done by <UL>
-  <LI> clicking on the "close window" icon, or
-  <LI> clicking on the OK-button, or
-  <LI> typing &lt;RETURN&gt; on the OK-button </UL>
+  Accepting the message is done by <ul>
+  <li> clicking on the "close window" icon, or
+  <li> clicking on the OK-button, or
+  <li> typing &lt;RETURN&gt; on the OK-button </ul>
   Each of these will close the dialog box.
-  <P>
+  <p>
   The Button "Show Stack Trace" will add the compactified
   stack trace including the chain of all causing exceptions
   to the message dialog box. The contents of the compact
   stack trace are described at method
   {@link Msg#printStackTrace(StringBuffer,Throwable)}.
-  <P>
-  <P>
+  <p>
   In an application this method should not be called directly from
-  a GUI class, but the author of each GUI class should set up a method e.g.<PRE>
+  a GUI class, but the author of each GUI class should set up a method e.g.<pre>
   private void _report(Throwable ex){Awt.report(this,ex,null);}
-  </PRE>, which will be called from each catch-clause in the event listeners
+  </pre>, which will be called from each catch-clause in the event listeners
   and adds the actual GUI class as the owner of the message dialog.
 
     @param io_ownerHook The owner Window of the dialog box will be determined
@@ -322,18 +323,26 @@ private static void _append(
 
 /**Result: Number of lines in String i_text.
  * Useful for sizing the text area in a message window.
+ * @param i_text A multi-line text
+ * @return The number of lines the String i_text has
   @see java.io.BufferedReader#readLine()
 */
 public static int countLines(final String i_text){
   final java.io.BufferedReader br
   = new java.io.BufferedReader(new java.io.StringReader(i_text));
-  for(int result=0;;result++){
-    String line; //final
-    try{line = br.readLine();}
-      catch(final java.io.IOException ex){line = null;}
-    //end try
-    if(line==null){return result;}
-  }
+  int result = 0;
+  for(;;result++){
+    final String line;
+    try{
+      line = br.readLine();
+    }catch(final java.io.IOException ex){
+      break;
+    }//end try
+    if(line==null){
+      break;
+    }
+  }//for
+  return result;
 }//_countLines
 
 /**Registers the class of the passed object as the default exception handler
@@ -384,7 +393,7 @@ public static void setAwtExceptionHandlerClass(final AwtExceptionHandler i_excep
 throws Failure
 {
     try {
-		final Class exceptionHandlerClass = i_exceptionHandler.getClass();
+		final Class<? extends AwtExceptionHandler> exceptionHandlerClass = i_exceptionHandler.getClass();
 		exceptionHandlerClass.newInstance();
 		//If the execution was successful up to here, then the class of 
 		// i_exceptionHandler fulfills the conditions required by class 

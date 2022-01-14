@@ -17,7 +17,8 @@ public static final String ex1Object = "Diagramm";
 public static final long ex1Value = 999;
 
 /**Constructs a chain of the 3 exceptions: 
- * multex.test.InitFailure, multex.Failure, ClassCastException
+ * {@link multex.test.InitFailure}, {@link multex.Failure}, {@link ClassCastException}
+ * @return the constructed exception chain
 */
 public static multex.test.InitFailure construct(){
 	final multex.Failure ex2 = new multex.Failure(

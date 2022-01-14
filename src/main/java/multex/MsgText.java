@@ -55,9 +55,9 @@ public  static final String causeMarker = "CAUSE: ";
  * */
 public  static final String causeMarkerKey = _className + ".causeMarker";
 
-/**If true, activates the static default internationalization of message texts.
-    Further calls to
-  {@link #appendMessageLine} or {@link #appendMessageTree} will deliver the
+/**Switches static internationalitaion of message texts on or off.
+ * @param i_internationalization If true, activates the static default internationalization of message texts.
+    Further calls to {@link #appendMessageLine} or {@link #appendMessageTree} will deliver the
   localized message text for an exception instead of the default message
   text contained in the MultexException-object.
   The localized message text will be taken from the resource bundle
@@ -100,7 +100,8 @@ throws IllegalArgumentException
     _resourceBundle = i_resourceBundle;
 }
 
-/**Returns the actual ResourceBundle used for static internationalization
+/**Returns the actual ResourceBundle used for static internationalization.
+ * @return The actual ResourceBundle used for static internationalization
  * or null, if no one is provided.*/
 public static ResourceBundle getResourceBundle(){return _resourceBundle;}
 
@@ -248,50 +249,52 @@ private static void _appendMessageLineDeletingPreviousOccurence(
 }
 
 
-/**Appends the usually one-line message text for the exception
-  i_throwable with inserted parameters to io_buffer.
+/**Appends the usually one-line message text for the {@link Throwable} with inserted parameters to the {@link StringBuffer}.
 
   The message text pattern for the exception is taken from the mostly localized
   variant of the properties file "MsgText.properties" or helpwise from the
   default message text pattern in the exception object itself. A local message
   text pattern for the german language (de) in its swiss (CH) variant would be
   taken from file "MsgText_de_CH.properties", see the Java Tutorial
-  <A HREF="http://java.sun.com/docs/books/tutorial/i18n/format/messageFormat.html">
-  chapter on internationalization</A> at february 1999.
-  <P>
-  This file must contain definition lines of the form: <PRE>
+  <a href="https://docs.oracle.com/javase/tutorial/i18n/format/messageFormat.html">
+  chapter on internationalization</a> at december 2021.
+  <p>
+  This file must contain definition lines of the form: <pre>
      packageName.ExceptionName = message text pattern
-  </PRE>or<PRE>
+  </pre>or<pre>
      packageName.ClassName$InnerExceptionName = message text pattern
-  </PRE>with parameter substitutors in the message text pattern, e.g.:<PRE>
+  </pre>with parameter substitutors in the message text pattern, e.g.:<pre>
      CopyNP$CopyFailure = The file "{0}" could not be copied to "{1}"
-  </PRE>
+  </pre>
+ * @param io_destination where to append the message line
+ * @param i_throwable for which {@link Throwable} a message line has to be produced
 */
 public static void appendMessageLine(final StringBuffer io_destination, final Throwable i_throwable){
     appendMessageLine(io_destination, i_throwable, getResourceBundle());
 }
 
-/**Appends the usually one-line message text for the exception
- * i_throwable with inserted parameters to io_buffer, localizable.
- * <P>The message line format is produced according to the following case list:
- * <UL>
- *   <LI>MulTEx exceptions:
- *     <UL>
- *       <LI>textPattern & parameters: textPattern with parameters inserted
- *       <LI>textPattern, no parameters: textPattern unchanged
- *       <LI>no textPattern, with parameters: ClassName: getMessage()
- *       <LI>neither textPattern nor parameters: ClassName
- *     </UL>
- *   <LI>Standard Java exceptions:
-  *     <UL>
- *       <LI>textPattern & detailMessage: textPattern: getMessage()
- *       <LI>textPattern, no detailMessage: textPattern unchanged
- *       <LI>no textPattern, with detailMessage: ClassName: getMessage()
- *       <LI>neither textPattern nor detailMessage: ClassName
- *     </UL>
- * </UL>
+/**Appends the usually one-line message text for the {@link Throwable}
+ * with inserted parameters to the {@link StringBuffer}, localizable.
+ * <p>The message line format is produced according to the following case list:
+ * <ul>
+ *   <li>MulTEx exceptions:
+ *     <ul>
+ *       <li>textPattern &amp; parameters: textPattern with parameters inserted
+ *       <li>textPattern, no parameters: textPattern unchanged
+ *       <li>no textPattern, with parameters: ClassName: getMessage()
+ *       <li>neither textPattern nor parameters: ClassName
+ *     </ul>
+ *   <li>Standard Java exceptions:
+  *     <ul>
+ *       <li>textPattern &amp; detailMessage: textPattern: getMessage()
+ *       <li>textPattern, no detailMessage: textPattern unchanged
+ *       <li>no textPattern, with detailMessage: ClassName: getMessage()
+ *       <li>neither textPattern nor detailMessage: ClassName
+ *     </ul>
+ * </ul>
  *
- *
+ * @param io_destination where to append the message line
+ * @param i_throwable for which {@link Throwable} a message line has to be produced
  * @param i_resourceBundle Source for the message text pattern for reporting i_throwable.
  *          The text pattern is taken with the class name of i_throwable
  *          as key from i_resourceBundle.

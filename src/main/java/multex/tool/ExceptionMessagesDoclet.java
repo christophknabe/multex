@@ -16,25 +16,26 @@ import com.sun.javadoc.RootDoc;
  * file given by the Doclet option <code>-out</code>. This file is lateron usable as a resource bundle for internationalizing
  * exception message texts.
  * Each Throwable message text pattern line will be in the format
- * <BR/>
- * <I>fully qualified internal class name</I>=<I>message text pattern</I>
- * <BR/>
+ * <br>
+ * <i>fully qualified internal class name</i>=<i>message text pattern</i>
+ * <br>
  * for example
- * <BR/>
- * <CODE>net.sourceforge.banking.lg.Account$CreditLimitExc=The amount of {0} euros is not available on this account.</CODE>
- * <P><B>Multiple line text</B>: If the main javadoc comment consists of more than one line, a backslash is appended to each line,
+ * <br>
+ * <code>net.sourceforge.banking.lg.Account$CreditLimitExc=The amount of {0} euros is not available on this account.</code>
+ * <p><b>Multiple line text</b>: If the main javadoc comment consists of more than one line, a backslash is appended to each line,
  * except the last one. So the convention of the .properties files continuation lines is achieved.
  * As Javadoc removes leading white space on continuation lines, and java.util.Properties.load removes trailing white space,
  * two subsequent lines in the Javadoc comment will be collapsed into one logical line without even a space between them.
- * <BR/>
+ * <br>
  * So in order to make a long exception message legible, you should break inside of a word or append \u0020 or \t to each physical line.
- * </P>
- * <P><B>Character Encoding</B>: The encoding used to interpret characters in the source files can be set by the Javadoc option -encoding.
- *   In ANT use the attribute Encoding="...".<BR/>
+ * </p>
+ * <p><b>Character Encoding</b>: The encoding used to interpret characters in the source files 
+ *   can be set by the Javadoc option <code>-encoding</code>.
+ *   In ANT use the attribute <code>Encoding="..."</code>.<br>
  *   The encoding used to encode characters when writing them to the -out file, is always ISO-8859-1, 
  *   as this is the only encoding usable for .properties files, see documentation of java.util.Properties.load(InputStream).
- * <BR/>
- * So in order to make a long exception message legible, you should break inside of a word or append \u0020 or \t to each physical line.
+ * <br>
+ * So in order to make a long exception message legible, you should break inside of a word or append <code>&#92;u0020</code> or <code>\t</code> to each physical line.
  * </P>
  **/
 public class ExceptionMessagesDoclet {
@@ -64,7 +65,11 @@ public class ExceptionMessagesDoclet {
         return 0;
     }
 
-    /**Entry point to execute this Doclet. It will be invoked by the Javadoc tool.*/
+    /**Entry point to execute this Doclet. It will be invoked by the Javadoc tool.
+     * @param i_rootDoc Comprising all classes to visit.
+     * @return true
+     * @throws Exception An error occured inside of this doclet.
+     */
     public static boolean start(final RootDoc i_rootDoc) throws Exception {
         new ExceptionMessagesDoclet()._execute(i_rootDoc);
         return true;
@@ -73,11 +78,11 @@ public class ExceptionMessagesDoclet {
     /**Appends all exception message text patterns to the file named by option -out in encoding ISO-8859-1,
      * as this is the standard encoding for Java .properties files, 
      * see java.util.Properties.load(InputStream inStream).
-     * @param rootDoc Comprising all classes to visit.
+     * @param i_rootDoc Comprising all classes to visit.
      * @throws Exception An error occured inside of this doclet.
      */
-    private void _execute(final RootDoc rootDoc) throws Exception {
-        final String outFileName = _getOutputFilename(rootDoc.options());
+    private void _execute(final RootDoc i_rootDoc) throws Exception {
+        final String outFileName = _getOutputFilename(i_rootDoc.options());
         final File outFile = new File(outFileName).getAbsoluteFile();
         //final FileWriter fileWriter = new FileWriter(outFile, /*append*/true);
         if(outFile.isDirectory()){
@@ -90,7 +95,7 @@ public class ExceptionMessagesDoclet {
         final OutputStreamWriter outputStreamWriter = new OutputStreamWriter(fileOutputStream, "ISO-8859-1");
         //this.out = new PrintWriter(fileWriter);
         this.out = new PrintWriter(outputStreamWriter);
-        _visitAll(rootDoc);
+        _visitAll(i_rootDoc);
         this.out.close();
         System.out.println();
         System.out.println(getClass().getName() + ": All exception message text patterns have been appended to file " + outFile);

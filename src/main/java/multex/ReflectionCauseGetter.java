@@ -3,7 +3,7 @@ package multex; //ReflectionCauseGetter.java
 import java.lang.reflect.Modifier;
 
 //History:
-//2002-07-01  Knabe  Developped from Jdk1_1CauseGetter
+//2002-07-01  Knabe  Developed from Jdk1_1CauseGetter
 //2002-06-24  Knabe  Re-added java.sql.SQLException, added java.sql.SQLWarning
 //2002-04-29  Knabe  Simpler Approach with built-in causes in JDK 1.4
 //2001-04-19  Knabe  Moved here from inner class Failure.Jdk1_1CauseGetter
@@ -24,7 +24,7 @@ public class ReflectionCauseGetter implements CauseGetter {
     Then uses reflection in order to try to get a causing Throwable.
     Then tries all public parameterless getter methods, which return a Throwable.
     TODO: Then should try all member fields of Throwable or a subtype.
-    If any of such trials succeeeds in getting a Throwable object, which is not the
+    If any of such trials succeeds in getting a Throwable object, which is not the
     same as i_throwable, then returns it.
     If none succeeds, returns null.
     @return The exception, which caused i_throwable to be created, or null if none is found.
@@ -43,7 +43,7 @@ public class ReflectionCauseGetter implements CauseGetter {
 	}
 
     //Start using reflection:
-    final Class throwableClass = i_throwable.getClass();
+    final Class<? extends Throwable> throwableClass = i_throwable.getClass();
 
     //Check for public get-methods returning a Throwable:
     try{
@@ -53,7 +53,7 @@ public class ReflectionCauseGetter implements CauseGetter {
         final java.lang.reflect.Method method = methods[i];
         final String methodName = method.getName();
         final int modifiers = method.getModifiers();
-        final Class[] parameterTypes = method.getParameterTypes();
+        final Class<?>[] parameterTypes = method.getParameterTypes();
         if(methodName.startsWith("get") && !methodName.equals("getCause")
           && Modifier.isPublic(modifiers)
           && !Modifier.isStatic(modifiers) && parameterTypes.length==0
@@ -76,11 +76,11 @@ public class ReflectionCauseGetter implements CauseGetter {
     final Throwable i_throwable, final java.lang.reflect.Method i_getCauseMethod
   ){
     try{
-        final Class returnType = i_getCauseMethod.getReturnType();
+        final Class<?> returnType = i_getCauseMethod.getReturnType();
         if(!Throwable.class.isAssignableFrom(returnType)){return null;}
         //Here returnType is a Throwable
         if(!i_getCauseMethod.isAccessible()){i_getCauseMethod.setAccessible(true);}
-        final Throwable result = (Throwable)i_getCauseMethod.invoke(i_throwable, null);
+        final Throwable result = (Throwable)i_getCauseMethod.invoke(i_throwable, (Object[])null);
         if(result==i_throwable){return null;} //identical exception object cannot be a cause
         return result;
     }catch(Exception ex){if(_log){ex.printStackTrace();}}

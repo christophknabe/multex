@@ -11,7 +11,8 @@ public class MyAwtExceptionHandler implements AwtExceptionHandler {
 
 	private static java.awt.Component _component;
 
-    /**Registers the Component as to be blocked during AWT exception reporting*/
+    /**Registers the Component as to be blocked during AWT exception reporting.
+     * @param io_component The Component to be blocked during message reporting */
     public static void setComponentToBeBlocked(final java.awt.Component io_component){
         _component = io_component;
     }

@@ -17,7 +17,7 @@ package multex; //MultexException.java
 public interface MultexException {
 
 
-/**Returns the default message text pattern for this exception object or null.
+/** @return The default message text pattern for this exception object or null.
   Inserting the exception parameters into the message text pattern is
   done by class {@link MsgText}.
   Locale specific message text patterns are handled by MsgText, too.
@@ -33,26 +33,25 @@ String getDefaultMessageTextPattern();
  */
 Throwable getCause();
 
-/**Returns true, if the exception parameter array exists and has at least one
- * element.*/
+/**@return true, if the exception parameter array exists and has at least one element.*/
 boolean hasParameters();
 
-/**Returns a copy of the positional exception parameter array, or null if the exception does not have parameters.*/
+/**@return a copy of the positional exception parameter array, or null if the exception does not have parameters.*/
 Object[] getParameters();
 
 /**
-  Returns all user-provided information contained in the exception object
+  @return all user-provided information contained in the exception object
   in an internal, but human readable format. The information are the default
   message text pattern and
   the exception parameters of this object or null if none of these is provided.
   E.g.:
-  <PRE>
+  <pre>
   *Unable to create file {0} in directory {1}
   *    {0}='myfile.dat'
   *    {1}='C:\temp\data'
-  </PRE>
-  Overrides the same method of
-  <A HREF="http://java.sun.com/j2se/1.3/docs/api/java/lang/Throwable.html">java.lang.Throwable</A>
+  </pre>
+  Overrides the method 
+  <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Throwable.html#getMessage--">java.lang.Throwable</a>
 */
 public String getMessage();
 

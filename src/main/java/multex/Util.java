@@ -6,7 +6,7 @@ package multex;
  * Usually methods of this class should not be called by framework client code.
  * Each exception (chain) should be reported by methods of classes
  * {@link multex.Msg} or {@link multex.Awt}, or {@link multex.Swing}.
- * <BR/>
+ * <br>
  * But if the format of the mentioned reporting classes is not approriate
  * for your purposes, then you can create your own reporting methods by
  * the help of this MulTEx utility class.
@@ -17,6 +17,9 @@ package multex;
 public class Util {
 
     /**Returns a new copy of the array or null, if null was provided
+     * @param i_array The array to clone
+     * @return a copy of the parameter. It is not a deep copy, 
+     * but only references directly contained in the array are copied.
      * @since MulTEx 6 on 2005-01-13
      * */
     public static Object[] clone(final Object[] i_array){
@@ -29,6 +32,7 @@ public class Util {
     /**Sets a CauseGetter to be used by method {@link #getCause(Throwable)}
     in order to get the cause of a Throwable object.
     Default is {@link ReflectionCauseGetter}
+    @param i_causeGetter A CauseGetter to be used in the future
     */
     public final static void setCauseGetter(final CauseGetter i_causeGetter){
         _causeGetter = i_causeGetter;
@@ -42,6 +46,8 @@ public class Util {
     * The cause getter is used only for getting a cause, which is returned by 
     * a method of the Throwable. All MulTEx parameters of this Throwable, which are themselves
     * instances of Throwable, are returned, too.
+    * @param i_throwable The root of a Throwable tree
+    * @return all Throwable objects directly contained in i_throwable either as cause or as parameters
     */
     public final static Throwable[] getCauses(final Throwable i_throwable){
     	//Count the causes:
@@ -93,6 +99,7 @@ public class Util {
 	}
     
     /** Gets the maximum recursion depth as specified in method {@link #setMaxRecursionDepth(int)}.
+     * @return The current maximum recursion depth  
      * @since MulTEx 8.3 as of 2011-03-25 */
     public static final int getMaxRecursionDepth(){
         return _maxRecursionDepth;
@@ -116,7 +123,9 @@ public class Util {
     /** @since MulTEx 8.3 as of 2011-03-25 */
     private static int _maxRecursionDepth = 10;
 
-	/** Result: The directly causing Throwable of i_throwable,
+	/** Returns the direct cause of i_throwable.
+	 * @param i_throwable The Throwable which may begin a chain of Throwables. 
+	 * @return The directly causing Throwable of i_throwable,
     * if there is one, otherwise null. This method is better than
     * Throwable.getCause(Throwable) in following legacy exception chaining,
     * as it uses the {@link ReflectionCauseGetter}
@@ -132,7 +141,8 @@ public class Util {
       return result;
     }
 
-    /**Returns true, if class java.lang.Throwable has an operation getCause() in this Java Runtime Environment*/
+    /**Returns if the JRE has exception chaining.
+     * @return true, if class java.lang.Throwable has an operation getCause() in this Java Runtime Environment*/
     public static boolean jreHasExceptionChaining(){return Util._jreHasExceptionChaining;}
 
     /**Nullifies the redundant lines ending each of the contained stack traces.
@@ -235,26 +245,6 @@ public class Util {
       }
     }//_nullifyCommonTraceTail
     */
-
-
-    /**Returns the upmost exception in i_throwableChain, which is of class
-    i_expectedThrowableClass, helpwise null.
-    Usage e.g. for a FieldValueExc, which is thrown
-    from the business logic layer to the user interface layer, wrapped some
-    times on this way, but should trigger a uniform reaction on the user
-    interface layer (Marking the named form field as erroneous, and issuing
-    its error message).
-    */
-    public static Throwable getContainedException_Old(
-        final Throwable i_throwableChain, final Class i_expectedThrowableClass
-    ){
-        for(Throwable result = i_throwableChain;;){
-            if(result==null){return result;}
-            if(i_expectedThrowableClass.isInstance(result)){return result;}
-            final Throwable cause = Util.getCause(result);
-            result = cause;
-        }
-    }
     
     /**Returns the upmost exception in i_throwableChain, which is of class
     i_expectedThrowableClass, helpwise null.
@@ -263,11 +253,13 @@ public class Util {
     times on this way, but should trigger a uniform reaction on the user
     interface layer (Marking the named form field as erroneous, and issuing
     its error message).
+    @param i_throwableChain a chain of Throwables
+    @param i_expectedThrowableClass the class an instance of which we search
     @return {@link #INFINITE_EXCEPTION_CHAIN} if the exception chain to be followed is longer than {@link #getMaxRecursionDepth()}.
       @see #setMaxRecursionDepth(int)
     */
     public static Throwable getContainedException(
-        final Throwable i_throwableChain, final Class i_expectedThrowableClass
+        final Throwable i_throwableChain, final Class<? extends Throwable> i_expectedThrowableClass
     ){
         Throwable result = i_throwableChain;
         for(int i=1; i<=_maxRecursionDepth; i++){
@@ -288,10 +280,11 @@ public class Util {
     /**Reusable instance*/
     public static final InfiniteExceptionChain INFINITE_EXCEPTION_CHAIN = new InfiniteExceptionChain();
 
-    /**Result: The deepest Throwable object, which indirectly caused the
+    /**@param i_throwable A Throwable chain.
+      @return The deepest Throwable object, which indirectly caused the
       program to throw i_throwable, if there is one, otherwise i_throwable
       itself. If i_throwable is null, the result will be null, too.
-    @return {@link #INFINITE_EXCEPTION_CHAIN} if the exception chain to be followed is longer than {@link #getMaxRecursionDepth()}.
+      Returns {@link #INFINITE_EXCEPTION_CHAIN} if the exception chain to be followed is longer than {@link #getMaxRecursionDepth()}.
       @see #getCause(Throwable)
       @see #setMaxRecursionDepth(int)
     */
@@ -320,13 +313,17 @@ public class Util {
      * The JDK reports in the format
      *   package.subpackage.ClassName: throwable.getMessage(),
      * which is suitably redefined for any {@link MultexException}, too.
-     * <P>But some legacy-chained exceptions like org.xml.sax.SAXException suppress the
+     * <p>
+     * But some legacy-chained exceptions like org.xml.sax.SAXException suppress the
      * class name of this exception and instead of it return the toString()
      * of the causing exception.
      * As to obtain all exception class names in a causal chain,
      * we use our own toString(), which includes
      * firstly a mere copy of Throwable.toString().and then the toString() of the reported
-     * exception.</P>
+     * exception.
+     * </p>
+     * @param i_throwable The Throwable which is to be converted as a String
+     * @return The result of converting the Throwable to a String. 
      */
     public static String toString(
         final Throwable i_throwable
@@ -586,15 +583,15 @@ public class Util {
     }
 
     /**Reports to System.err, if the class of this exception object
-    does not satisfy the conditions: <UL>
-      <LI> end with i_suffix
-    </UL>
+    does not satisfy the conditions: <ul>
+      <li> end with i_suffix</li>
+    </ul>
     This checking should better occur statically before running a program
     and not dynamically each time an exception object is created.
     */
     /*package*/ static void checkClass(final Exception i_exception, final String i_suffix){
       //check, that class name ends with i_suffix:
-      final Class exceptionClass = i_exception.getClass();
+      final Class<? extends Exception> exceptionClass = i_exception.getClass();
       final String exceptionName = exceptionClass.getName();
       if(!exceptionName.endsWith(i_suffix)){
         printErrorString("The name of subclass ");
@@ -714,18 +711,6 @@ public class Util {
 	 * @since MulTEx 6d 2006-05-16
 	 */
 	public static final char causeIndenter = '+';
-	
-	/**The demonstration of action ''{0}'' failed by fault of person {1}.
-	 * We will criticize him.*/ 
-	public static final class MyDemoExc extends Exc {
-
-		/**Constructor.*/
-		public MyDemoExc(final String i_action, final String i_person) {
-			super(null, i_action, i_person);
-		}
-		
-	}
-
 
     private static final String _className = Util.class.getName();
 

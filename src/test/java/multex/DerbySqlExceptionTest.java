@@ -5,8 +5,6 @@ import java.sql.SQLException;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.Assert;
-import static multex.MultexUtil.create;
 import multex.test.MultexAssert;
 
 //2011-03-25  Knabe  Modified to DerbySqlExceptionTest

@@ -78,7 +78,7 @@ public class MsgTest extends MultexAssert {
 	);	
 }
 
-/** Tests printing the default messages for the exception chain {@link Exception3Chain}. */
+/** Tests printing the default messages for the exception chain {@link TextException3Chain}. */
 public void printMessages_defaultTextFromExceptionObject(){
 	final Throwable ex1 = TextException3Chain.construct();
 	_check_TextException3Chain_Messages(ex1);
@@ -121,7 +121,7 @@ public void printMessages_ofExcWithSystemOrMultexCause(){
 	final String result1 = buf1.toString();
 
 	final StringBuffer buf2 = new StringBuffer("2) ");
-	Msg.printMessages(buf2, topExc1);
+	Msg.printMessages(buf2, topExc2);
 	final String result2 = buf1.toString();
 
 	assertLongStringEquals(

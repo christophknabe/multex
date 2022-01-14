@@ -1,5 +1,6 @@
 package multex;
 
+import java.text.MessageFormat;
 import java.util.Collection;
 
 //History:
@@ -29,29 +30,29 @@ import java.util.Collection;
   business rule exceptions. Objects directly of this class can be thrown, too, but such
   exceptions cannot be catched individually nor get internationalized.
 
-  <H2>Naming convention:</H2>
+  <h2>Naming convention:</h2>
   All user-defined exception classes derived from Exc should have a name
-  ending in Exc. The pattern is: <PRE>
+  ending in Exc. The pattern is: <pre>
     class ErrorconditionExc extends Exc { ... }
-  </PRE>
+  </pre>
 
-  <H2>Parameters</H2>
+  <h2>Parameters</h2>
   All elements of the Object[] are
   considered positional parameters of this exception. The corresponding
   placeholders in the message text patterns have the syntax: {i}
   with i being the number of the parameter in the range 0..9.
-  <P>
+  <p>
   The exception parameters can
   be substituted into the corresponding message text pattern in a desired locale
   format by class {@link MsgText}, which itself makes use of class
   java.text.MessageFormat. 
   <br>
   See the usage examples Copy, AwtCopy, SwingCopy in directory demo.
-  <br/>
+  <br>
   Since MulTEx version 7 of 2006-05-06 you can pass many instances of Throwable as parameters.
   They will form an exception tree and are correctly reported by class {@link Msg}.
 
-  <H2>Relation to Standards</H2>
+  <h2>Relation to Standards</h2>
   Class java.text.MesageFormat does much more in direction of internationalization
   than just to insert parameters into a message text pattern.
   You can e.g. specify different styles of formatting a parameter.
@@ -59,13 +60,13 @@ import java.util.Collection;
   could be done by the following parameter formatting directive:
   {0,date}.
 
-  <H2>Cause of a business rule exception</H2>
+  <h2>Cause of a business rule exception</h2>
   The class Exc does since MulTEx version 7 of 2006-05-06 provide a parameter cause in its constructor.
   In the rare case, you have got a cause of a business rule exception,
   you can provide it just like to a {@link multex.Failure}.
 
-  <P>Example</P>
-  <PRE>
+  <p>Example</p>
+  <pre>
 * //NIS-Authentication of userName:
 * final String userData;
 * try {
@@ -73,12 +74,12 @@ import java.util.Collection;
 * } catch (final NameNotFoundException ex) {
 *     throw new multex.Exc("User name {0} unknown", ex, userName);
 * }
-  </PRE>
+  </pre>
 
-  <H2>Warning</H2>
+  <h2>Warning</h2>
   Usually you get a causal exception only when performing the modification part of an operation.
   Such causal exceptions should be captured using a {@link multex.Failure}.
-  @author Christoph Knabe, TFH Berlin, 1999-2007, http://www.tfh-berlin.de/~knabe/ 
+  @author Christoph Knabe, TFH Berlin, 1999-2007, http://public.bht-berlin.de/~knabe/ 
 */
 
 public class Exc extends java.lang.RuntimeException implements MultexException { //2007-09-21 as unchecked exception MulTEx 8
@@ -92,8 +93,10 @@ public static final String className = "Exc";
 
 private final String _defaultMessageTextPattern;
 
-/**Positional parameters of this exception, or null if no parameters are given.*/
-private /*final*/ Object[] _parameters; //can be set by constructor or method init
+/**Positional parameters of this exception, or null if no parameters are given.
+ * Not private, as needs to be set by reference inside this class in method {@link #throwMe(Object...)}.
+ * Not final, as can be set by constructor or method init. */
+/*private final*/ Object[] _parameters;
 
 /**Constructs an Exc with now no diagnostic information.
  * You should additionally provide:<UL>
@@ -109,6 +112,7 @@ this((Object[])null, (String)null);
 }
 
 /**Constructs an Exc with only a default message text pattern.
+ * @param i_defaultMessageTextPattern The default message text pattern in the syntax of {@link MessageFormat}
 @see #Exc(String, Object...)
 */
 public Exc(final String i_defaultMessageTextPattern){
@@ -139,7 +143,12 @@ public Exc(
 }
 
 /**Convenience constructor null
-  @see #Exc(String, Throwable, Object[])
+    @param i_defaultMessageTextPattern The default message text pattern
+    in the syntax of java.text.MessageFormat
+    @param i_cause The causing Throwable object for providing the diagnostics causer chain.
+                   null is allowed here, if no cause is available or necessary.
+                   In most cases an Exc will not have a cause, but will be checked for by an if-condition.
+  @see #Exc(String, Throwable, Object...)
 */
 public Exc(
   final String i_defaultMessageTextPattern, final Throwable i_cause
@@ -150,7 +159,7 @@ public Exc(
 /**Constructs an Exc with a default message text pattern, a cause,
 * and exception parameters as an polymorphic Object[].
 * When to give a cause to an Exc is discussed in the class description.
-* <P>Example of defining an Exc with default text, cause and parameters: <PRE>
+* <p>Example of defining an Exc with default text, cause and parameters: <pre>
 *   public static class UserUnknownExc extends Exc {
 *     public UserUnknownExc(
 *       final Throwable i_cause,
@@ -161,7 +170,7 @@ public Exc(
 *       );
 *     }
 *   }//UserUnknownExc
-* </PRE>
+* </pre>
 
     @param i_defaultMessageTextPattern The default message text pattern
     in the syntax of java.text.MessageFormat
@@ -169,7 +178,7 @@ public Exc(
     @param i_cause The causing Throwable object for providing the diagnostics causer chain.
                    null is allowed here, if no cause is available or necessary.
                    In most cases an Exc will not have a cause, but will be checked for by an if-condition.
-    @param i_parameters Exception parameters as a polymorphic Object[],
+    @param i_parameters Exception parameters as objects,
         which can be inserted into the message text pattern by placeholders {0} ... {9}.
         null is allowed here, if you do not want to provide exception parameters.
 */
@@ -183,10 +192,12 @@ public Exc(
 
 /**Convenience constructor with parameters as Collection.
  * You can use this as a List Exc, passing collected Throwables to i_parameters.
-  @see #Exc(String, Throwable, Object[])
+ * @param i_defaultMessageTextPattern The default message text pattern in the syntax of {@link MessageFormat}
+ * @param i_parameters Many parameters or causing {@link Throwable} objects to this Exc
+  @see #Exc(String, Throwable, Object...)
 */
 public Exc(
-  final String i_defaultMessageTextPattern, /*final Throwable i_cause,*/ final Collection i_parameters
+  final String i_defaultMessageTextPattern, /*final Throwable i_cause,*/ final Collection<Object> i_parameters
 ){
   this(i_parameters.toArray(), i_defaultMessageTextPattern);
 }
@@ -232,27 +243,29 @@ public Exc initParameters(final Object... i_parameters){
  *</PRE>
  *Atttention: As long as Exc is a checked exception, the here mentioned throws clause is not sufficient.
  *You will have to write throws Exc.
+ * @param <E> Exc subtype to be thrown
  * @param i_parameters the parameters for the exception message
  * @since MulTEx 7.3 2007-09-18
  */
+@SuppressWarnings("unchecked")
 public static <E extends Exc> void throwMe(final Object... i_parameters) throws E {
-    Class c = null;
+    Class<?> c = null;
     final E e;
     try {
-        final Class[] callingClasses = securityManager.getCallingClasses();
+        final Class<?>[] callingClasses = securityManager.getCallingClasses();
         //final List<Class> callingClassesList = Arrays.asList(callingClasses);
         //System.out.println("Calling classes: " + callingClassesList);
         c = callingClasses[2];
         e = (E)c.newInstance();
         e._parameters = i_parameters;
     } catch (Exception cause) {
-        throw new RuntimeException("Cannot throw " + c, cause);
+        throw new Failure("Cannot throw " + c, cause, i_parameters);
     }
     throw e;
 }
 /**Purpose: Enabling access to a protected method of java.lang.SecurityManager.*/
 private static final class MySecurityManager extends SecurityManager {
-    public Class[] getCallingClasses(){
+    public Class<?>[] getCallingClasses(){
         return getClassContext();
     }
 }

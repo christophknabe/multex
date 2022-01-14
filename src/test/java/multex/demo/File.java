@@ -26,17 +26,17 @@ package multex.demo;  //File.java
   and of the abstracted CopyFailure.
 
   Additionally CopyFailure has two parameters:
-  <P>{0}=Name of the input file, {1}=Name of the output file
+  <p>{0}=Name of the input file, {1}=Name of the output file
 
-  <P>Example Dialog with JRE 1.4:
-<code><pre>
-*  C:\>java multex.demo.File -c eingabe ausgabe
+  <p>Example Dialog with JRE 1.4:
+<pre>
+*  $ java multex.demo.File -c eingabe ausgabe
 *  File 'input' could not be copied to 'output'
 *  CAUSE: java.io.FileNotFoundException: input (The system can't find the indicated file)
 *  -----Stack trace follows-----
 *  java.io.FileNotFoundException: input (The system can't find the indicated file)
 *          at java.io.FileInputStream.open(Native Method)
-*          at java.io.FileInputStream.<init>(FileInputStream.java:68)
+*          at java.io.FileInputStream.&lt;init&gt;(FileInputStream.java:68)
 *          at File.copy(File.java:140)
 *  WAS CAUSING:
 *  multex.demo.File$CopyFailure: File ''{0}'' could not be copied to ''{1}''
@@ -45,10 +45,10 @@ package multex.demo;  //File.java
 *          at File.copy(File.java:154)
 *          at File.main(File.java:83)
 *          at ...
-*  C:\>
-</pre></code>
+*  $
+</pre>
 
-<P>The shorter way to capture low level diagnostic information is used
+<p>The shorter way to capture low level diagnostic information is used
   in method move(inFileName, outFileName).
   @see #move(String, String)
 */
@@ -76,7 +76,8 @@ public class File {
     System.exit(1);
   }
 
-  /**Effect: Copies or moves file i_args[1] in binary mode to file i_args[2].*/
+  /**Effect: Copies or moves file i_args[1] in binary mode to file i_args[2].
+   * @param i_args the command line arguments */
   public static void main(final String[] i_args){
     if(i_args.length!=3){_exitWithUsage();}
     final String option=i_args[0], inFileName=i_args[1], outFileName=i_args[2];
@@ -131,7 +132,9 @@ public class File {
     }
   }//CopyFailure
 
-  /**Effect: Copies the file i_inFileName in binary mode to file i_outFileName.
+  /**Effect: Copies a file in binary mode to a new name.
+    @param i_inFileName the old name of the file
+    @param i_outFileName the new name of the file
   */
   public static void copy(
     final String i_inFileName,
@@ -158,8 +161,10 @@ public class File {
     //end try
   }//copy
 
-  /**Effect: Moves the file i_inFileName to file i_outFileName. This method
-    firstly copies the input file in binary mode and then deletes it.
+  /**Effect: Moves a file from its old name to a new name. This method
+    firstly copies the input file in binary mode and then deletes the old file.
+    @param i_inFileName the old name of the file
+    @param i_outFileName the new name of the file
     @throws multex.Failure if its is not possible to move file i_inFileName
       to file i_outFileName; This way of directly throwing a multex.Failure
       exception is less writing; You can nevertheless provide an individual

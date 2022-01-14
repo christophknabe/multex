@@ -1,59 +1,60 @@
 /** MulTEx - the Multi-Tier Exception Handling Framework.
-<P>MulTEx is a simple, but powerful framework for organizing exceptions
-and messages is a multi-tier Java software system.
-</P>
-<P>It offers the key features:<UL>
-  <LI>Causal chains/trees as a means to capture low-level error information
-  <LI>Redundancy-free stack traces and message chains in the case of indirectly caused exceptions
-  <LI>Internationalized message texts and parameters for exceptions
-  <LI>Services for reporting an exception chain/tree onto streams and dialogs
-  <LI>A standard way for writing method bodies with regard to exceptions
-  <LI>A collection of utilities for centralized exception reporting
-</UL>
-For introductory information you should first read the technical paper or the user's guide.
-</P>
+<p>MulTEx is a simple, but powerful framework for organizing exceptions
+and messages in a multi-tier Java software system.
+</p>
+<p>It offers the key features:</p>
+<ul>
+  <li>Causal chains/trees as a means to capture low-level error information</li>
+  <li>Redundancy-free stack traces and message chains in the case of indirectly caused exceptions</li>
+  <li>Internationalized message texts and parameters for exceptions</li>
+  <li>Services for reporting an exception chain/tree onto streams and dialogs</li>
+  <li>A standard way for writing method bodies with regard to exceptions</li>
+  <li>A collection of utilities for centralized exception reporting</li>
+</ul>
+<p>For introductory information you should first read the technical paper or the user's guide.</p>
 
-<H2>Naming conventions</H2>
-<P>The following naming conventions are used throughout the package <CODE>multex</CODE>.
-<UL>
-  <LI>i_name for an in-parameter of a method, i.e. either a parameter of a primitive
+<h2>Naming conventions</h2>
+<p>The following naming conventions are used throughout the package <code>multex</code>.</p>
+<ul>
+  <li>i_name for an in-parameter of a method, i.e. either a parameter of a primitive
       type or a parameter of a reference type, which will not be modified
       by the invoked method.
-  </LI>
-  <LI>o_name for an out-parameter of a method, i.e. a parameter of a reference type,
+  </li>
+  <li>o_name for an out-parameter of a method, i.e. a parameter of a reference type,
       where the referred object will be completely initialized by the method,
       ignoring all its previous content.
-  </LI>
-  <LI>io_name for an in/out-parameter of a method, i.e. a parameter of a reference type,
+  </li>
+  <li>io_name for an in/out-parameter of a method, i.e. a parameter of a reference type,
       where the referred object will be modified by the method,
       possibly using its previous content.
-  </LI>
-  <LI>_name for attributes or methods, which should not be used from
+  </li>
+  <li>_name for attributes or methods, which should not be used from
     outside the class or its subclasses.
-  </LI>
-</UL>
-</P>
+  </li>
+</ul>
 
-<H2>Plans</H2>
+<h2>Plans</h2>
 The plans are ordered by priority (most important as No. 1)
-<OL>
-  <LI>2002-04-20 Add buttons for printing or copying the contents of the
+<ol>
+  <li>2002-04-20 Add buttons for printing or copying the contents of the
     message window of multex.Awt; place the buttons before the message TextArea.
-  </LI>
-  <LI>2005-01-13 Include wrapper exceptions for some exceptions, which do not show
+  </li>
+  <li>2005-01-13 Include wrapper exceptions for some exceptions, which do not show
     all their diagnostic info by toString(). Maybe on reflection basis.
     I think SQLException is a candidate for this, as its attributes
     SQLState, and vendorCode are not included in its toString().
-  </LI>
-  <LI>2005-01-13 Include private attributes of type Throwable into the
+  </li>
+  <li>2005-01-13 Include private attributes of type Throwable into the
     {@link multex.ReflectionCauseGetter} in order to get the cause for
     an exception, which does not implement the getCause() of JDK 1.4.
     Is there still any such exception?
-  </LI>
-</OL>
-<A name="versionHistory"/>
+  </li>
+</ol>
+<a name="versionHistory"></a>
 <H2>Version history</H2><UL>
 
+  <li>8.4 of 2022-01-03: Compiled and runs on Java 8. Maven artifact renamed to io.github.christophknabe:multex
+  </li>
   <li>8.3 of 2011-11-08: Compiled and runs on Java 6. 
     Class {@link multex.Util} has a new method {@link multex.Util#setMaxRecursionDepth(int)}.
     The lower level utility method {@link multex.Util#getCause(Throwable)}
@@ -67,40 +68,40 @@ The plans are ordered by priority (most important as No. 1)
   <li>8.1 of 2008-12-08: {@link multex.MultexUtil#create(Class, Object...)} accepts exception class without cause or parameters.
   </li>
   <li>8.0 of 2008-01-09: New german paper about Central Exception Reporting.
-    <br/>Class {@link multex.Exc} now unchecked.
-    <br/>Method {@link multex.Exc#throwMe(Object...)} in class <code>Exc</code>
-    <br/>Method {@link multex.Util#getOriginalException(Throwable)} called with a <b>null</b> argument returns <b>null</b> instead of throwing a <code>NullPointerException</code>
+    <br>Class {@link multex.Exc} now unchecked.
+    <br>Method {@link multex.Exc#throwMe(Object...)} in class <code>Exc</code>
+    <br>Method {@link multex.Util#getOriginalException(Throwable)} called with a <b>null</b> argument returns <b>null</b> instead of throwing a <code>NullPointerException</code>
   </li>
   <LI>7.3 of 2007-09-18:
     Compatible to previous version 7.2, but requires Java 5. Using the new features of Java 5, where helpful.
-    <BR/>Static factory method for parameterized exceptions: {@link multex.MultexUtil#create(Class, Object...)}.
+    <br>Static factory method for parameterized exceptions: {@link multex.MultexUtil#create(Class, Object...)}.
     This allows a much simpler declaration of a parameterized exception, as you no longer have to declare a constructor in it.
-    <BR/>The constructors for the parameterized exception classes {@link multex.Exc}, {@link multex.Failure}, and {@link multex.AssertionFailure},
+    <br>The constructors for the parameterized exception classes {@link multex.Exc}, {@link multex.Failure}, and {@link multex.AssertionFailure},
     and the method {@link multex.Assertion#check} are now using an <code>Object...</code> parameter, instead of being overloaded with
     variants with 0 to 9 message parameters.
-    <BR/>Added in User's Guide: How to declare and throw parameterized exceptions, how to write method bodies encapsulating exceptions from a lower layer.
-    <BR/>The {@link multex.tool.ExceptionMessagesDoclet} now correctly converts also a multi-line main javadoc comment of each exception
+    <br>Added in User's Guide: How to declare and throw parameterized exceptions, how to write method bodies encapsulating exceptions from a lower layer.
+    <br>The {@link multex.tool.ExceptionMessagesDoclet} now correctly converts also a multi-line main javadoc comment of each exception
     into the format for .properties files. It adds a backslash at the end of each line to be continued.
   </LI>
   <LI>7.2 of 2007-09-04:
     Optimized {@link multex.ReflectionCauseGetter}.
     Does not use reflection on {@link multex.MultexException}s.
-    <BR/>This version is the last usable with Java 1.4.
-    <BR/>This version is the first produced by Maven (2).
+    <br>This version is the last usable with Java 1.4.
+    <br>This version is the first produced by Maven (2).
   </LI>
   <LI>7.1 of 2006-11-04
     Added {@link multex.tool.ExceptionMessagesDoclet}.
     You can use this doclet to extract the main comment of each Throwable into a .properties file as message text.
-    <BR/>
+    <br>
     Added constructor {@link multex.Failure#Failure(String)} without a cause.
   </LI>
   <LI>7 of 2006-05-11: Added parameter cause in constructors of class {@link multex.Exc};
     Added method getCause() in interface {@link multex.MultexException}.
-    <BR/>Added list exception facility: All parameters of a {@link multex.MultexException}, which are of type java.lang.Throwable,
+    <br>Added list exception facility: All parameters of a {@link multex.MultexException}, which are of type java.lang.Throwable,
       are reported by {@link multex.Msg#printMessages}, thus resulting in a causal exception tree instead of an exception chain.
-    <BR/>{@link multex.Msg#printStackTrace} prints thus a redundancy-free stack trace of all exceptions,
+    <br>{@link multex.Msg#printStackTrace} prints thus a redundancy-free stack trace of all exceptions,
       contained in the causal exception tree.
-    <BR/>As the tree is symbolized by an indentation by multiple <code>+</code> signs,
+    <br>As the tree is symbolized by an indentation by multiple <code>+</code> signs,
       the layout of printMessages and printStackTrace is no longer the same as in MulTEx 6.
   </LI>
   <LI>6c of 2006-02-16
@@ -118,60 +119,60 @@ The plans are ordered by priority (most important as No. 1)
     AWT or Swing GUI. See example in class multex.demo.AwtFile.
   </LI>
   <LI>6 of 2005-01-13
-      <BR/>Improvement: The methods in class {@link multex.Msg}
+      <br>Improvement: The methods in class {@link multex.Msg}
       for printing the stack trace of a Throwable chain betterly recognize
       low level causes in an exception chain. They follow the chain by the
       {@link multex.ReflectionCauseGetter} instead of leaving this to
       Throwable.printStackTrace().
-      <BR/>Restriction: Now needs JRE >= 1.4, which exists already >= 3 years.
-      <BR/>Incompatible: Much utility functionality moved from class
+      <br>Restriction: Now needs JRE &ge; 1.4, which exists already &ge; 3 years.
+      <br>Incompatible: Much utility functionality moved from class
       {@link multex.Failure} to the new class {@link multex.Util}.
   </LI>
   <LI>5d of 2004-12-10:
-      <BR/>Restriction: MulTEx now needs JRE >= 1.2 for execution, JDK >= 1.4 for testing.
-      <BR/>Improvement: The methods in class {@link multex.Msg}
+      <br>Restriction: MulTEx now needs JRE &ge; 1.2 for execution, JDK &ge; 1.4 for testing.
+      <br>Improvement: The methods in class {@link multex.Msg}
       for printing the messages of a Throwable chain,
       suppress redundant info caused by legacy exception chaining as String,
       e.g. Root cause is ..., or nested exception is ...
   </LI>
   <LI>5c of 2004-11-05:
-      <BR/>Bugfix: The methods in class {@link multex.Msg}
+      <br>Bugfix: The methods in class {@link multex.Msg}
       for printing the stack trace of a Throwable chain, report a null Throwable
       instead of throwing NullPointerException.
-      <BR/>Improvement: The methods in class {@link multex.Msg}
+      <br>Improvement: The methods in class {@link multex.Msg}
       for printing the messages of a Throwable chain,
       a) report a null Throwable instead of printing nothing,
       b) suppress reporting an object of the exact class Failure
          without any own info. See {@link multex.Failure#Failure(Throwable)} shortly
          for the concept of a tunneling exception.
-      <BR/>Packaging: The release is a .zip file, which contains a -class.jar file
+      <br>Packaging: The release is a .zip file, which contains a -class.jar file
         with all core framework classes, and a -java.jar file with the source code
         of the framework, the test suite, and the demo programs.
   </LI>
   <LI>5b of 2004-05-11:
-      <BR/>Bugfix: Method {@link multex.Msg#printReport(StringBuffer, Throwable, ResourceBundle)}
+      <br>Bugfix: Method {@link multex.Msg#printReport(StringBuffer, Throwable, ResourceBundle)}
       now passes its ResourceBundle to multex.Msg.printMessages(...).
-      <BR/>Bug avoiding: Now {@link multex.Awt} and {@link multex.Swing} show the reporting dialog
+      <br>Bug avoiding: Now {@link multex.Awt} and {@link multex.Swing} show the reporting dialog
       in the AWT event queue thread, instead of the callers thread.
       See http://java.sun.com/developer/JDCTechTips/2003/tt1208.html
-      <BR/>Comfort: Method {@link multex.Awt#countLines(String)} is now public.
+      <br>Comfort: Method {@link multex.Awt#countLines(String)} is now public.
   </LI>
   <LI>5a of 2003-11-25:
-      <BR/>Bugfix: Report any exception with message text pattern, but without
+      <br>Bugfix: Report any exception with message text pattern, but without
       exception parameters or Throwable.getMessage() without
       <CODE>": null"</CODE>.. Corresponding testcases added.
   </LI>
   <LI>5 of 2003-09-12:
-      <BR/>Added class {@link multex.Swing} for reporting into a Swing dialog
+      <br>Added class {@link multex.Swing} for reporting into a Swing dialog
           with dynamic or static internationalization.
           Interface of class {@link multex.Awt} simplified (incompatible change) and made
           uniform with Swing.
-      <BR/>Added method {@link multex.Util#getContainedException(java.lang.Throwable,java.lang.Class)}, originally to class Failure.
-      <BR/>Simpler dynamic internationalization using only a java.util.ResourceBundle
-      <BR/>Takes the cause marker from the used ResourceBundle
+      <br>Added method {@link multex.Util#getContainedException(java.lang.Throwable,java.lang.Class)}, originally to class Failure.
+      <br>Simpler dynamic internationalization using only a java.util.ResourceBundle
+      <br>Takes the cause marker from the used ResourceBundle
       by key {@link multex.MsgText#causeMarker} instead of giving it as a separate
       argument (incompatible change).
-      <BR/>
+      <br>
       Class MultexLocale deprecated, see there (incompatible change).
       Unnecessary parameter i_lineSeparator removed in all methods.
       See class description {@link multex.Msg} (incompatible change).

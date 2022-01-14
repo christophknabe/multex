@@ -30,6 +30,7 @@ public static final long ex1Value = 999;
  *   <LI>multex.Failure without info</LI>
  *   <LI>ClassCastException</LI>
  * </OL>
+ * @return the constructed exception chain with some {@link Failure} instances without any information
 */
 public static Failure construct(){
 	final Failure ex2 = new multex.Failure(
