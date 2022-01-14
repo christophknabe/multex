@@ -6,7 +6,7 @@
   <body>
     <links> <!-- Obere Navi-Zeile -->
       <item name="MulTEx" href="/index.html" />
-      <item name="Maven" href="http://maven.apache.org/"/>
+      <item name="Maven" href="https://maven.apache.org/"/>
     </links>
 <!--
     <menu name="Plexus">

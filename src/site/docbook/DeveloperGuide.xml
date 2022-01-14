@@ -28,7 +28,11 @@
     <section>
       <title>Programming Tools</title>
 
-      <para>The build process is managed by Maven 3.</para>
+      <para>The build process is managed by Maven 3 and run on Java 8.</para>
+      <para>A complete product and site build followed by deploys is done as follows,
+        if you have the correct Java and Maven on the path:
+      </para>
+      <command>mvn clean deploy site site:deploy</command>
     </section>
 
     <section>
@@ -63,10 +67,10 @@
 
       <para>The command for generating the HTML and PDF output is:</para>
 
-      <para><programlisting>mvn pre-site</programlisting>The
+      <para><programlisting>mvn site</programlisting>The
       documents are generated into the
-      <filename>target/site/docbook</filename> directory. From file
-      <filename>src/site/site.xml</filename> you can link to them.</para>
+      <filename>target/site/docbook</filename> directory. In file
+      <filename>src/site/site.xml</filename> you can layout your navigation of the documentation site.</para>
 
       <!--End of Documentation Tools-->
     </section>

@@ -12,7 +12,7 @@
   <groupId>io.github.christophknabe</groupId>
   <artifactId>multex</artifactId>
   <!-- Indicate version as m.n-SNAPSHOT during development, and finally before release as m.n ! -->
-  <version>8.4-SNAPSHOT</version>
+  <version>8.4</version>
   <!-- 8.4 is the identical port of 8.3 to the github/Sonatype infrastructure for publishing it. 
        Now with groupId io.github.christophknabe instead of former de.tfh-berlin.knabe 
        and developed on Java 8 instead of Java 6.
@@ -28,6 +28,8 @@
     <project.build.sourceEncoding>ISO-8859-1</project.build.sourceEncoding>
     <project.reporting.outputEncoding>ISO-8859-1</project.reporting.outputEncoding>
     <tools.jar.path>${env.JAVA_HOME}/lib/tools.jar</tools.jar.path>
+    <surefire.version>3.0.0-M5</surefire.version>
+    <site.version>3.10.0</site.version>
   </properties>  
   <dependencies>
     <dependency>
@@ -109,14 +111,44 @@
           <target>1.8</target>
         </configuration>
       </plugin>
-      <!-- See https://central.sonatype.org/publish/publish-maven/ -->
+      <plugin>
+      <!-- Java Code Coverage analyzer. See https://www.petrikainulainen.net/programming/maven/creating-code-coverage-reports-for-unit-and-integration-tests-with-the-jacoco-maven-plugin/ -->
+      <groupId>org.jacoco</groupId>
+      <artifactId>jacoco-maven-plugin</artifactId>
+      <executions>
+      <!-- Prepares the property pointing to the JaCoCo runtime agent, which 
+      is passed as VM argument, when the Maven Surefire plugin is executed. -->
+      <execution>
+      <id>pre-unit-test</id>
+      <goals>
+        <goal>prepare-agent</goal>
+      </goals>
+      <configuration>
+        <!-- Sets the path to the file which contains the execution data. -->
+        <destFile>${project.build.directory}/coverage-reports/jacoco-ut.exec</destFile>
+        <!-- Sets the name of the property containing the settings for the JaCoCo runtime agent. -->
+        <propertyName>surefireArgLine</propertyName>
+      </configuration>
+      </execution>
+      </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <version>${surefire.version}</version>
+      <configuration>
+      <!-- Sets the VM argument line for test runs in Surefire, created by 
+      the upper prepare-agent goal of the jacoco-maven-plugin. -->
+      <argLine>${surefireArgLine}</argLine>
+      </configuration>
+      </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-source-plugin</artifactId>
         <version>2.2.1</version>
         <configuration>
           <attach>true</attach>
-        </configuration>       
+        </configuration>            
         <executions>
           <execution>
             <id>attach-sources</id>
@@ -183,8 +215,8 @@
       </plugin>
       <plugin>
         <artifactId>maven-site-plugin</artifactId>
-        <version>3.10.0</version>
-      </plugin>
+        <version>${site.version}</version>
+      </plugin>      
       <plugin>
         <groupId>org.sonatype.plugins</groupId>
         <artifactId>nexus-staging-maven-plugin</artifactId>
@@ -196,18 +228,7 @@
           <autoReleaseAfterClose>true</autoReleaseAfterClose>
         </configuration>
       </plugin>
-      <!-- Retired since 2015
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-eclipse-plugin</artifactId>   
-        <version>2.8</version>
-        <configuration>
-          <downloadSources>true</downloadSources>
-          <eclipse.useProjectReferences>false</eclipse.useProjectReferences>
-        </configuration>
-      </plugin>
-      -->
-	</plugins>
+  </plugins>
     <extensions>
       <extension> <!-- In the Apache repository -->
         <groupId>org.apache.maven.wagon</groupId> 
@@ -216,36 +237,31 @@
       </extension>
     </extensions>
     <pluginManagement>
+      <plugins>
+        <plugin>
+        <!-- Java Code Coverage analyzer. See https://www.petrikainulainen.net/programming/maven/creating-code-coverage-reports-for-unit-and-integration-tests-with-the-jacoco-maven-plugin/ -->
+        <groupId>org.jacoco</groupId>
+        <artifactId>jacoco-maven-plugin</artifactId>
+        <version>0.8.7</version>
+      </plugin>
+      </plugins>
     </pluginManagement>
   </build>
   <reporting>
     <plugins>
-      <!--
-	  <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>docbook-maven-plugin</artifactId>
-        <configuration>
-          <language>en</language>
-        </configuration> 
-	  </plugin>
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>cobertura-maven-plugin</artifactId>
-      </plugin> 
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>jdepend-maven-plugin</artifactId>
-        <version>2.0-beta-2</version>
+        <version>2.0</version>
       </plugin>
-      --> 
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-site-plugin</artifactId>
-        <version>3.10.0</version>
+        <version>${site.version}</version>
       </plugin>
       <plugin>
         <artifactId>maven-surefire-report-plugin</artifactId>
-        <version>3.0.0-M5</version>
+        <version>${surefire.version}</version>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -256,9 +272,28 @@
         <artifactId>maven-project-info-reports-plugin</artifactId>
         <version>3.1.2</version> 
       </plugin> 
+      <plugin>
+        <groupId>org.jacoco</groupId>
+        <artifactId>jacoco-maven-plugin</artifactId>
+        <reportSets>
+          <!-- Ensures that the code coverage report for unit tests is created after unit tests have been run. -->
+          <reportSet>
+            <id>post-unit-test</id>
+            <reports>
+              <report>report</report>
+            </reports>
+            <configuration>
+              <!-- Sets the path to the file which contains the collected execution data. -->
+              <dataFile>${project.build.directory}/coverage-reports/jacoco-ut.exec</dataFile>
+              <!-- Sets the output directory for the code coverage report. -->
+              <outputDirectory>${project.reporting.outputDirectory}/jacoco-ut</outputDirectory>
+            </configuration>
+          </reportSet>
+        </reportSets>
+      </plugin>
     </plugins>
   </reporting>
-
+  
   <!-- More Project Information -->
   <name>The Multi-Tier Exception Handling Framework (MulTEx ${project.version})</name>
   <description>MulTEx is a simple, but powerful framework for organizing exceptions
@@ -308,43 +343,45 @@
     <tag>HEAD</tag>
     <url>https://github.com/christophknabe/multex</url>
   </scm>
-
+  
   <!-- Environment Settings -->
 
   <repositories>
-	<!-- Besides Maven Central the following repositories are needed: -->
-	<repository>
-		<!-- For the dummy artifact org.eclipse.m2e:lifecycle-mapping -->
-		<id>tu-delft-repository</id>
-		<name>Technical University Delft Maven repository</name>
-		<url>https://simulation.tudelft.nl/maven/</url>
-		<snapshots>
-			<enabled>false</enabled>
-		</snapshots>
-	</repository>
+    <!-- Besides Maven Central the following repositories are needed: -->
+    <repository>
+      <!-- For the dummy artifact org.eclipse.m2e:lifecycle-mapping -->
+      <id>tu-delft-repository</id>
+      <name>Technical University Delft Maven repository</name>
+      <url>https://simulation.tudelft.nl/maven/</url>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+    </repository>
   </repositories>
   <pluginRepositories>
-    <!-- Codehaus no longer active since 2015:
-    <pluginRepository>
-      <id>codehaus-snapshots</id>
-      <name>Maven Codehaus Snapshots</name>
-      <url>http://snapshots.repository.codehaus.org/</url>
-    </pluginRepository>
-    -->
-    <!-- wagon-ssh-external ist doch in repo1.maven.org drin:
-    <pluginRepository>
-      <id>Apache</id>
-      <name>Default repository from Apache (Mirror)</name>
-      <url>http://ftp.cica.es/mirrors/maven2/</url>
-    </pluginRepository>
-    -->
   </pluginRepositories>
   <distributionManagement>
     <snapshotRepository>
       <id>ossrh</id>
       <url>https://s01.oss.sonatype.org/content/repositories/snapshots</url>
-    </snapshotRepository>
+    </snapshotRepository>    
+    <site>
+      <id>bht-hrz-knabe</id>
+      <!--
+      <url>scp://hrz.tfh-berlin.de/usr1/doz/knabe/homepage/public_html/java/multex/snapshot/</url>
+      <url>scp://compute.tfh-berlin.de/usr1/doz/knabe/homepage/public_html/java/multex/snapshot/</url>
+      <url>scpexe://compute.bht-berlin.de.de/usr1/doz/knabe/homepage/public_html/java/multex/snapshot/</url>
+      -->
+      <url>scpexe://compute.bht-berlin.de/srv/homepage/knabe/public_html/java/multex/snapshot/</url>
+    </site>
+    <!-- Hier stellt sich die Frage, ob diese URL korrekt zeigt, oder ob sie eine Ebene tiefer
+      auf eine konkrete Versionsnummer zeigen muss. 11-03-31 Knabe
+    -->
+    <!-- 
+    <downloadUrl>http://public.beuth-hochschule.de/~knabe/mvn-repo/de/tfh-berlin/knabe/multex/</downloadUrl>
+    -->
   </distributionManagement>
+
   <profiles>
     <profile>
       <!-- Avoid build error "Could not find artifact org.eclipse.m2e:lifecycle-mapping:pom:1.0.0"
