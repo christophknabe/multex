@@ -388,6 +388,9 @@ public static int countLines(final String i_text){
  * 
  * @see <a href="http://www.jguru.com/faq/view.jsp?EID=427279">JGuru discussion</a>
  *
+ * @deprecated Should no longer be used, but instead make use of the standard <a href="Thread.UncaughtExceptionHandler">Thread.UncaughtExceptionHandler</a> interface.
+ *     See the <a href="https://docs.oracle.com/javase/8/docs/technotes/guides/troubleshoot/awt001.html">Debug Tips for AWT</a>. 2022-04-28 Knabe
+ *
  */
 public static void setAwtExceptionHandlerClass(final AwtExceptionHandler i_exceptionHandler)
 throws Failure
