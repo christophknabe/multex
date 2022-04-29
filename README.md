@@ -9,7 +9,7 @@ MulTEx is a simple, but powerful framework for organizing exceptions and user me
 * Redundancy-free stack traces in the case of indirectly caused exceptions
 
  ## Author
- Christoph Knabe, former professor at Berliner Hochschule für Technik - Berlin University of Applied Sciences and Technology.
+ Christoph Knabe, former professor at [Berliner Hochschule für Technik - Berlin University of Applied Sciences and Technology](https://www.bht-berlin.de/).
 
 ## Copyright
 MulTEx is open source software copyrighted by the GNU LGPL. The copyright holder is the author.
