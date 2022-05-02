@@ -7,7 +7,7 @@ with which tools and how the software is maintained.
 
 ### 1.1 Programming Tools
 
-The build process is managed by Maven 3 and run on Java 8.
+The build process is managed by Maven 3 and runs on Java 8.
 
 A complete product and site build followed by deploys is done as follows,
 if you have the correct Java and Maven on the path:
