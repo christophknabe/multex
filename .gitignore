@@ -1,1 +1,13 @@
-target/
+
+#Maven, build and deploy process
+/target/
+#This should be a private script to execute Maven under Java 8
+/java8.sh
+
+#IntelliJ IDEA:
+/.idea/
+
+#Eclipse:
+/.settings/
+/.classpath
+/.project
