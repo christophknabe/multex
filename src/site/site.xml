@@ -14,9 +14,6 @@
     </menu>
 -->
     <menu name="Overview">
-      <item name="Overview" href="overview.html"/>
-      <item name="User's Guide (HTML)" href="docbook/index.html"/>
-      <item name="User's Guide (PDF)" href="docbook/UserGuide.pdf"/>
       <item name="Javadoc" href="apidocs/overview-summary.html"/>
       <item name="Version History" href="apidocs/multex/package-summary.html#versionHistory"/>
       <item name="Developer's Guide" href="DeveloperGuide.html"/>

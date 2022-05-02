@@ -19,62 +19,16 @@
     <pubdate><?dbtimestamp format="Y-m-d"?></pubdate>
   </articleinfo>
 
-  <para>In this developer's guide we describe, with which tools and how the
-  software is maintained.</para>
-
   <section>
     <title>Tools Used</title>
 
     <section>
       <title>Programming Tools</title>
-
-      <para>The build process is managed by Maven 3 and run on Java 8.</para>
-      <para>A complete product and site build followed by deploys is done as follows,
-        if you have the correct Java and Maven on the path:
-      </para>
-      <command>mvn clean deploy site site:deploy</command>
     </section>
 
     <section>
       <title>Documentation Tools</title>
-
-      <para>The two textual documents (technical paper
-      <filename>Konzepte.pdf</filename>, and slides
-      <filename>Vortragsfolien.pdf</filename>) are still in german language,
-      and edited in OpenOffice.</para>
-
-      <para>They must be transformed to PDF manually, and then stored manually
-      to the directory <filename>src/site/resources</filename></para>
-
-      <para>The User's and the Developer's Guide are already edited as DocBook
-      XML files in the directory <filename>src/site/docbook</filename>. See <ulink
-      url="https://docbook.org/">https://docbook.org/</ulink>. This
-      format is especially useful for being managed by a versioning system,
-      and for generating output for different targets, for example web sites,
-      and printed books.</para>
-
-      <para>You can edit it in an XML-aware text editor, as in the open source
-      jEdit with it's XML plugin, or with a dedicated DocBook XML editor, as
-      the XMLmind XML Editor, see <ulink
-      url="https://www.xmlmind.com/xmleditor/">https://www.xmlmind.com/xmleditor/</ulink>.
-      The latter is much more comfortable. It is free for non-commercial
-      use.</para>
-
-      <para>The DocBook documents are transformed to HTML and PDF by the
-      <filename>docbkx-maven-plugin</filename> for Maven 3, which is located at <ulink
-      url="http://docbkx-tools.sourceforge.net/">http://docbkx-tools.sourceforge.net/</ulink>.
-      </para>
-
-      <para>The command for generating the HTML and PDF output is:</para>
-
-      <para><programlisting>mvn site</programlisting>The
-      documents are generated into the
-      <filename>target/site/docbook</filename> directory. In file
-      <filename>src/site/site.xml</filename> you can layout your navigation of the documentation site.</para>
-
-      <!--End of Documentation Tools-->
     </section>
 
-    <!--End of Tools Used-->
   </section>
 </article>

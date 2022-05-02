@@ -9,7 +9,7 @@ MulTEx is a simple, but powerful framework for organizing exceptions and user me
 * Redundancy-free stack traces in the case of indirectly caused exceptions
 
 ## Documentation
-Online documentation is step-by-step being migrated to directory [docs/user-guide](docs/user-guide),
+Online documentation is step-by-step being migrated to directory [docs](docs),
 as the traditional publishing service at http://public.bht-berlin.de/~knabe/java/multex/
 is not always available.
 
