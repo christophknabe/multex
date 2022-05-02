@@ -14,3 +14,8 @@ You should introduce it according to these priorities:
 
 The last three numbers are covered in the document
 [How to introduce/use MulTEx in the API layers](2.propagate-parameterize-textize.md)
+
+## German Background Papers
+* [Konzepte](../../src/site/resources/Konzepte.pdf)
+* [Vortragsfolien](../../src/site/resources/Vortragsfolien.pdf)
+* [Zentrales Ausnahmemelden](../../src/site/resources/JavaMagazin-2007-11p23-27_KnabeHashemi.pdf)
