@@ -14,15 +14,10 @@
     </menu>
 -->
     <menu name="Overview">
+      <item name="Usage Docs" href="https://github.com/christophknabe/multex/docs/"/>
       <item name="Javadoc" href="apidocs/overview-summary.html"/>
       <item name="Version History" href="apidocs/multex/package-summary.html#versionHistory"/>
-      <item name="Developer's Guide" href="DeveloperGuide.html"/>
-    </menu>
-
-    <menu name="German background papers">
-      <item name="Konzepte" href="Konzepte.pdf"/>
-      <item name="Vortragsfolien" href="Vortragsfolien.pdf"/>
-      <item name="Zentrales Ausnahmemelden" href="JavaMagazin-2007-11p23-27_KnabeHashemi.pdf"/>
+      <item name="Source Repository" href="https://github.com/christophknabe/multex/"/>
     </menu>
 
     <menu ref="reports"/>

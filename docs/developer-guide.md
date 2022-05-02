@@ -1,7 +1,7 @@
 # Developer's Guide for MulTEx
 
 In this developer's guide we describe,
-with which tools and how the software is maintained.
+with which tools and how this software is maintained.
 
 ## 1. Tools Used
 
