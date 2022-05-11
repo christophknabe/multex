@@ -53,6 +53,10 @@ The plans are ordered by priority (most important as No. 1)
 <a name="versionHistory"></a>
 <H2>Version history</H2><UL>
 
+  <li>8.5 of 2022-05-11: Disallows creation of a non-static inner class as subclass of
+    {@link multex.Exc} or {@link multex.Failure}. This avoids passing an outer this-reference
+    as part of the exception.  
+  </li>
   <li>8.4 of 2022-01-07: Compiled and runs on Java 8. Artifact vendor renamed to io.github.christophknabe.
   Test coverage report by JaCoCo instead of Cobertura. 
   </li>

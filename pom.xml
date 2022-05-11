@@ -12,7 +12,8 @@
   <groupId>io.github.christophknabe</groupId>
   <artifactId>multex</artifactId>
   <!-- Indicate version as m.n-SNAPSHOT during development, and finally before release as m.n ! -->
-  <version>8.4.1</version>
+  <version>8.5-SNAPSHOT</version>
+  <!-- 8.5 disables creation of inner non-static MulTEx exception classes. -->
   <!-- 8.4.1 has the documentation migrated from Maven Site to GitHub Markdown. -->
   <!-- 8.4 is the identical port of 8.3 to the github/Sonatype infrastructure for publishing it. 
        Now with groupId io.github.christophknabe instead of former de.tfh-berlin.knabe 

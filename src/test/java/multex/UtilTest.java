@@ -4,6 +4,9 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.StringReader;
+import java.lang.reflect.Constructor;
+import java.util.Arrays;
+
 import org.junit.Test;
 
 import multex.test.MultexAssert;
@@ -14,11 +17,11 @@ public class UtilTest extends MultexAssert {
 
 
     //Testfixtures:
-    private static final int _baseLineNumber = 17; //Must be the same as the line it stands on!!!
+    private static final int _baseLineNumber = 20; //Must be the same as the line it stands on!!!
 	private final Exc       t1  = new Exc("Kategorie nicht erlaubt");      //Leave at this line!
-	private final Throwable t21 = new FileNotFoundException("kasse.dat");  //Leave at line 17
-	private final Failure t2    = new Failure("Ziel nicht gefunden", t21); //Leave at line 18
-	private final Exc listExc   = new Exc("Verarbeitungsfehler", t1, t2);  //Leave at line 19
+	private final Throwable t21 = new FileNotFoundException("kasse.dat");  //Leave at line 22
+	private final Failure t2    = new Failure("Ziel nicht gefunden", t21); //Leave at line 23
+	private final Exc listExc   = new Exc("Verarbeitungsfehler", t1, t2);  //Leave at line 24
     private static final int _t1LineNumber = _baseLineNumber + 1;
     private static final int _t21LineNumber = _t1LineNumber + 1;
     private static final int _t2LineNumber = _t21LineNumber + 1;
@@ -145,6 +148,35 @@ public class UtilTest extends MultexAssert {
         r.close();
         final String expected = l1+Util.lineSeparator+l2+Util.lineSeparator+l3+Util.lineSeparator;
         assertEquals(expected, io_destination.toString());
+    }
+    
+    static class MyStaticExc extends Exc {}
+    static class MyStaticFailure extends Failure {}
+    
+    @Test public void checkClass_permittedCases() {
+    	//check direct objects of Exc respectively Failure:
+    	Util.checkClass(t1, "Exc");
+    	final Failure failure = new Failure(t1);
+    	Util.checkClass(failure, "Failure");
+    	//Check objects of static inner subclasses or implementation classes of Exc, Failure, MultexException
+    	final MyStaticExc myExc = new MyStaticExc();
+    	Util.checkClass(myExc, "Exc");
+    	final MyStaticFailure myFailure = new MyStaticFailure();
+    	Util.checkClass(myFailure, "Failure");
+    }
+    
+    public class MyNonstaticExc extends Exc {}
+    public class MyNonstaticFailure extends Failure {}
+    
+    @Test public void exceptionConstructor_failsIfNonstaticInner() {
+    	try{
+        	new MyNonstaticExc();
+    		fail("IllegalArgumentException expected");
+    	}catch(final IllegalArgumentException expected) {}
+    	try{
+        	new MyNonstaticFailure();
+    		fail("IllegalArgumentException expected");
+    	}catch(final IllegalArgumentException expected) {}
     }
 
     private StackTraceElement[] stripFirstThreeElements(final StackTraceElement[] trace) {

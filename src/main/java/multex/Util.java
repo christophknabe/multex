@@ -1,5 +1,7 @@
 package multex;
 
+import java.lang.reflect.Modifier;
+
 /**
  * Utilities for MulTEx.
  *
@@ -584,14 +586,17 @@ public class Util {
 
     /**Reports to System.err, if the class of this exception object
     does not satisfy the conditions: <ul>
-      <li> end with i_suffix</li>
+      <li>end with i_suffix</li>
     </ul>
     This checking should better occur statically before running a program
     and not dynamically each time an exception object is created.
+    @throws IllegalArgumentException the class of the exception is a non-static
+      inner class. That means it ports a this-reference to the enclosing object around.
     */
     /*package*/ static void checkClass(final Exception i_exception, final String i_suffix){
-      //check, that class name ends with i_suffix:
       final Class<? extends Exception> exceptionClass = i_exception.getClass();
+      checkClassIsStatic(exceptionClass);
+      //check, that class name ends with i_suffix:
       final String exceptionName = exceptionClass.getName();
       if(!exceptionName.endsWith(i_suffix)){
         printErrorString("The name of subclass ");
@@ -604,6 +609,22 @@ public class Util {
         printErrorLine();
       }
     }
+
+	static void checkClassIsStatic(final Class<? extends Exception> exceptionClass) {
+		final Class<?> enclosingClass = exceptionClass.getEnclosingClass();
+		  if(enclosingClass!=null) {
+			  //nested class
+			  final int modifiers = exceptionClass.getModifiers();
+			  if(!Modifier.isStatic(modifiers)) {
+				  final String exceptionClassName = exceptionClass.getName();
+				throw new IllegalArgumentException(
+						  "Do not use the Exception subclass " + exceptionClassName + ", which is an inner class and non-static.\n"
+						  + "Such a class ports a reference to its enclosing class " + enclosingClass.getName() + "\n"
+						  + "You should add the modifier static to this class " + exceptionClassName
+						  );
+			  }
+		  }
+	}
 
     /**Moves parameter 0 to the cause of the exception, if the parameter 0 is a Throwable.
      * @param <E> The type of a MulTEx exception

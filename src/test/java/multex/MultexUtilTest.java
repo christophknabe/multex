@@ -2,6 +2,7 @@ package multex;
 
 import java.io.File;
 import org.junit.Test;
+
 import org.junit.Assert;
 import static multex.MultexUtil.create;
 
@@ -58,10 +59,25 @@ public class MultexUtilTest extends Assert {
         }
     }
     
+    @Test public void createException_failsIfNonstaticInner() {
+    	final Class<MyNonstaticExc> myNonstaticExcClass = MyNonstaticExc.class;
+    	try{
+			MultexUtil.create(myNonstaticExcClass, "arg1");
+    		fail("IllegalArgumentException expected");
+    	}catch(final IllegalArgumentException expected) {}
+    	try{
+    		MultexUtil.create(MyNonstaticFailure.class);
+    		fail("IllegalArgumentException expected");
+    	}catch(final IllegalArgumentException expected) {}    	
+    }
+    
     /**File {0} not found in directory {1}*/
     static final class FileNotFoundExc extends Exc {}
     /**Failure opening file {0} in directory {1}*/
     static final class FileOpenFailure extends Failure {}
+    
+    public class MyNonstaticExc extends Exc {}
+    public class MyNonstaticFailure extends Failure {}
     
     
 

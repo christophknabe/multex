@@ -1,5 +1,7 @@
 package multex;
 
+import java.lang.reflect.Modifier;
+
 /**This class contains static API methods, which can be used nearly as keywords.
  * <p>You can put them for easy usage into the global namespace by declaring
  * <br><code>import static multex.MultexUtil.*;</code>
@@ -34,12 +36,14 @@ public class MultexUtil {
      * @param io_parameters Message parameters for the exception. If the first parameter is of type Throwable, as in the example creating a UserLoginFailure, 
      *        it will be separated as the cause of the new exception. The last parameter will by this become null.
      * @return The new, parameterized exception object
+     * @throws IllegalArgumentException given Class is an inner non-static class or does not have a parameterless constructor 
      * @throws RuntimeException Failure during the creation by reflection
      * @since MulTEx 7.3 at 2007-09-18
      */
     public static <E extends Exception & MultexException> E create(final Class<E> c, final Object... io_parameters) throws RuntimeException {
         final E e;
         String className = null;
+        Util.checkClassIsStatic(c);
         try {
             className = c.getName();
             e = c.newInstance();
