@@ -132,41 +132,6 @@ private static final Exception _ex1 = new multex.test.InitFailure(_ex2, "OOO", 9
 	);
 }
 
-@Test public void toStringSimple(){
-	//In the case without cause the standard String representation is
-	//   package.subpackage.Class: detailMessage
-	final Throwable throwable = new Throwable("AAA");
-	final String throwableString = Util.toString(throwable);
-	assertEquals("java.lang.Throwable: AAA", throwableString);
-	assertEquals(throwable.toString(), throwableString);
-
-	//The same holds for a SAXException without causing exception:
-	final SAXException saxException = new SAXException("BBB");
-	final String saxExceptionString = Util.toString(saxException);
-	assertEquals("org.xml.sax.SAXException: BBB", saxExceptionString);
-	assertEquals(saxException.toString(), saxExceptionString);
-}
-
-@Test public void toStringWithCause(){
-	final IllegalArgumentException illegalArgumentException = new IllegalArgumentException("99");
-	final String illegalArgumentExceptionString = Util.toString(illegalArgumentException);
-	assertEquals("java.lang.IllegalArgumentException: 99", illegalArgumentExceptionString);
-	assertEquals(illegalArgumentException.toString(), illegalArgumentExceptionString);
-	
-	//If SAXException had a causing exception in SAX 1.0, it unfortunately suppressed
-	//its own class name and detailMessage.  This strange behaviour is documented here:
-	final SAXException saxException = new SAXException("BBB", illegalArgumentException);
-	final String saxExceptionString = "org.xml.sax.SAXException: BBB\njava.lang.IllegalArgumentException: 99";
-	assertEquals(
-		saxExceptionString,
-		saxException.toString()
-	);
-
-	//Thus as a rule they should be 
-	//included in the toString(), if no already by itself:
-	assertEquals(saxExceptionString, Util.toString(saxException));
-}
-
 @Test public void formatWithLocales(){
 	final StringBuffer result = new StringBuffer();
 	final Float number = new Float(9999.99);

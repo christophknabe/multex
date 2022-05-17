@@ -4,10 +4,8 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.StringReader;
-import java.lang.reflect.Constructor;
-import java.util.Arrays;
-
 import org.junit.Test;
+import org.xml.sax.SAXException;
 
 import multex.test.MultexAssert;
 
@@ -17,7 +15,7 @@ public class UtilTest extends MultexAssert {
 
 
     //Testfixtures:
-    private static final int _baseLineNumber = 20; //Must be the same as the line it stands on!!!
+    private static final int _baseLineNumber = 18; //Must be the same as the line it stands on!!!
 	private final Exc       t1  = new Exc("Kategorie nicht erlaubt");      //Leave at this line!
 	private final Throwable t21 = new FileNotFoundException("kasse.dat");  //Leave at line 22
 	private final Failure t2    = new Failure("Ziel nicht gefunden", t21); //Leave at line 23
@@ -65,6 +63,82 @@ public class UtilTest extends MultexAssert {
         final Throwable nullResult = Util.getOriginalException(null);
         assertNull(nullResult);
     }
+
+	@Test public void toString_withoutCause(){
+		//In the case without cause the standard String representation is
+		//   package.subpackage.Class: detailMessage
+		{
+			final Throwable throwable = new Throwable("AAA");
+			final String result = Util.toString(throwable);
+			assertEquals("java.lang.Throwable: AAA", result);
+			assertEquals(throwable.toString(), result);
+		}
+		//The same holds for a SAXException without causing exception:
+		{
+			final SAXException saxException = new SAXException("BBB");
+			final String result = Util.toString(saxException);
+			assertEquals("org.xml.sax.SAXException: BBB", result);
+			assertEquals(saxException.toString(), result);
+		}
+	}
+
+	static class ExceptionWithoutClassName extends Exception {
+		
+		public ExceptionWithoutClassName(final String message) {
+			super(message);
+		}
+		// Here the class name is missing in toString:
+		@Override public String toString() {
+			return getMessage();
+		}
+		
+	}
+	
+	static class ExceptionWithoutMessage extends Exception {
+		
+		public ExceptionWithoutMessage(final String message) {
+			super(message);
+		}
+		// Here the message is missing in toString:
+		@Override public String toString() {
+			return getClass().getName();
+		}
+		
+	}
+
+	@Test public void toStringWithCause_shouldIncludeOwnClassNameAndMessage(){
+		final IllegalArgumentException cause = new IllegalArgumentException("99");
+		final String causeString = Util.toString(cause);
+		assertEquals("java.lang.IllegalArgumentException: 99", causeString);
+		assertEquals(cause.toString(), causeString);
+		
+		// SAXException includes the cause string into its own string representation.
+		// We do not want that, as we have the causal chain stringized in a better format by Msg.printMessages.
+		final SAXException saxException = new SAXException("(<BBB>)", cause);
+		{
+			// Here the undesired behavior is documented:
+			final String saxExceptionString = "org.xml.sax.SAXException: (<BBB>)\njava.lang.IllegalArgumentException: 99";
+			assertEquals(
+				saxExceptionString,
+				saxException.toString()
+			);
+		}
+
+		{
+			final ExceptionWithoutClassName exceptionWithoutClassName = new ExceptionWithoutClassName("(<BBB>)");
+			// Here we test that Util.toString starts with its own class name and contains its own message:
+			final String result = Util.toString(exceptionWithoutClassName);
+			assertIsStart(exceptionWithoutClassName.getClass().getName(), result);
+			assertIsContained("(<BBB>)", result);
+		}
+		{
+			final ExceptionWithoutMessage exceptionWithoutMessage = new ExceptionWithoutMessage("(<BBB>)");
+			// Here we test that Util.toString starts with its own class name and contains its own message:
+			final String result = Util.toString(exceptionWithoutMessage);
+			assertIsStart(exceptionWithoutMessage.getClass().getName(), result);
+			assertIsContained("(<BBB>)", result);
+		}
+	}
 	
 	/** Tests printing the stack trace for an Exc with a list of Throwables as parameters. */
 	@Test public void appendCompactStackTrace_ListExc(){
@@ -177,6 +251,33 @@ public class UtilTest extends MultexAssert {
         	new MyNonstaticFailure();
     		fail("IllegalArgumentException expected");
     	}catch(final IllegalArgumentException expected) {}
+    }
+    
+    @Test public void checkRunsOnJreVersionOrLater() {
+    	Util.checkRunsOnJreVersionOrLater(Util.buildJreVersion);
+    	try {
+    		Util.checkRunsOnJreVersionOrLater("9");
+    		fail("RuntimeException expected");
+    	}catch(RuntimeException expected) {}
+    	try {
+    		Util.checkRunsOnJreVersionOrLater("11");
+    		fail("RuntimeException expected");
+    	}catch(RuntimeException expected) {}
+    }
+    
+    @Test public void compareVersions() {
+		//Test examples taken from https://www.baeldung.com/java-comparing-versions
+    	{
+			final int result = Util.compareVersions("1.0.1", "1.1.2");
+			assertTrue(Integer.toString(result), result < 0);
+		}
+		assertTrue(Util.compareVersions("1.0.1", "1.10") < 0);
+        assertTrue(Util.compareVersions("1.1.2", "1.0.1") > 0);
+        assertTrue(Util.compareVersions("1.1.2", "1.2.0") < 0);
+        assertEquals(0, Util.compareVersions("1.3.0", "1.3"));
+        //Own Java version examples
+    	assertTrue(Util.compareVersions("1.8", "10") < 0);
+    	assertTrue(Util.compareVersions("10", "10.1") < 0);      
     }
 
     private StackTraceElement[] stripFirstThreeElements(final StackTraceElement[] trace) {

@@ -1,6 +1,7 @@
 package multex;
 
 import java.lang.reflect.Modifier;
+import java.util.Arrays;
 
 /**This class contains static API methods, which can be used nearly as keywords.
  * <p>You can put them for easy usage into the global namespace by declaring
@@ -43,14 +44,14 @@ public class MultexUtil {
     public static <E extends Exception & MultexException> E create(final Class<E> c, final Object... io_parameters) throws RuntimeException {
         final E e;
         String className = null;
-        Util.checkClassIsStatic(c);
         try {
+            Util.checkClassIsStatic(c, null);
             className = c.getName();
             e = c.newInstance();
             Util.shiftParameter0ToCauseIfNecessary(e, io_parameters);
             e.initParameters(io_parameters);
         } catch (Exception createException) {
-            throw new RuntimeException("Cannot create " + className, createException);
+            throw new RuntimeException("Cannot create " + className + ", parameters: " + Arrays.toString(io_parameters), createException);
         }
         return e;
     }

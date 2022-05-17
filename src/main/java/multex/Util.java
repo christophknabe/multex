@@ -1,6 +1,7 @@
 package multex;
 
 import java.lang.reflect.Modifier;
+import java.util.regex.Pattern;
 
 /**
  * Utilities for MulTEx.
@@ -18,6 +19,9 @@ import java.lang.reflect.Modifier;
  */
 public class Util {
 
+    /**Do not create objects of me!*/
+    private Util(){}
+    
     /**Returns a new copy of the array or null, if null was provided
      * @param i_array The array to clone
      * @return a copy of the parameter. It is not a deep copy, 
@@ -142,10 +146,6 @@ public class Util {
       }
       return result;
     }
-
-    /**Returns if the JRE has exception chaining.
-     * @return true, if class java.lang.Throwable has an operation getCause() in this Java Runtime Environment*/
-    public static boolean jreHasExceptionChaining(){return Util._jreHasExceptionChaining;}
 
     /**Nullifies the redundant lines ending each of the contained stack traces.
      * Since the stack trace of an exception and its cause have much in common,
@@ -300,15 +300,6 @@ public class Util {
         }
         return INFINITE_EXCEPTION_CHAIN;
     }
-    
-    public final static Throwable getOriginalException_Old(final Throwable i_throwable){
-        if(i_throwable==null){return null;}
-        for(Throwable result = i_throwable;;){
-            final Throwable cause = Util.getCause(result);
-            if(cause==null){return result;}
-            result = cause;
-        }
-    }
 
     /**For low level reporting of an exception. Preferably use this toString(), than
      * the JDK-provided throwable.toString().
@@ -316,15 +307,12 @@ public class Util {
      *   package.subpackage.ClassName: throwable.getMessage(),
      * which is suitably redefined for any {@link MultexException}, too.
      * <p>
-     * But some legacy-chained exceptions like org.xml.sax.SAXException suppress the
-     * class name of this exception and instead of it return the toString()
-     * of the causing exception.
-     * As to obtain all exception class names in a causal chain,
-     * we use our own toString(), which includes
-     * firstly a mere copy of Throwable.toString().and then the toString() of the reported
-     * exception.
+     * But some legacy exceptions suppress the class name or the message of the exception.
+     * In order to obtain all relevant information of an exception
+     * we use our own toString(), which augments the result of .toString()
+     * by the class name and the message of the exception, if needed.
      * </p>
-     * @param i_throwable The Throwable which is to be converted as a String
+     * @param i_throwable The Throwable which is to be converted to a String
      * @return The result of converting the Throwable to a String. 
      */
     public static String toString(
@@ -335,12 +323,21 @@ public class Util {
     
         //Other exception:
         final String className = i_throwable.getClass().getName();
-        final String detailMessage = i_throwable.getMessage();
-        if(throwableString.indexOf(className)>=0){return throwableString;}
-        //className missing in throwableString
-        return className + (detailMessage==null ? "" : ": " + detailMessage)
-            + "; Caused by: " + throwableString
-        ;
+        final String message = i_throwable.getMessage();        
+        final boolean classNameContained = throwableString.indexOf(className) >= 0;
+        final boolean messageContained = message==null || throwableString.indexOf(message) >= 0;
+		if(classNameContained && messageContained){return throwableString;}
+		final StringBuilder result = new StringBuilder();
+		if(!classNameContained) {
+			result.append(className);
+			result.append(": ");
+		}
+		result.append(throwableString);
+		if(!messageContained) {
+			result.append("; ");
+			result.append(message);
+		}
+		return result.toString();
     }
 
     /**Prints the given string to System.err.
@@ -595,22 +592,11 @@ public class Util {
     */
     /*package*/ static void checkClass(final Exception i_exception, final String i_suffix){
       final Class<? extends Exception> exceptionClass = i_exception.getClass();
-      checkClassIsStatic(exceptionClass);
-      //check, that class name ends with i_suffix:
-      final String exceptionName = exceptionClass.getName();
-      if(!exceptionName.endsWith(i_suffix)){
-        printErrorString("The name of subclass ");
-        printErrorString(exceptionName);
-        printErrorString(" of ");
-        printErrorString(i_suffix);
-        printErrorString(" should end in ");
-        printErrorString(i_suffix);
-        printErrorString("!");
-        printErrorLine();
-      }
+      checkClassIsStatic(exceptionClass, i_exception);
+      _checkClassnameSuffix(exceptionClass, i_exception, i_suffix);
     }
 
-	static void checkClassIsStatic(final Class<? extends Exception> exceptionClass) {
+	static void checkClassIsStatic(final Class<? extends Exception> exceptionClass, final Exception i_exception) {
 		final Class<?> enclosingClass = exceptionClass.getEnclosingClass();
 		  if(enclosingClass!=null) {
 			  //nested class
@@ -621,8 +607,20 @@ public class Util {
 						  "Do not use the Exception subclass " + exceptionClassName + ", which is an inner class and non-static.\n"
 						  + "Such a class ports a reference to its enclosing class " + enclosingClass.getName() + "\n"
 						  + "You should add the modifier static to this class " + exceptionClassName
+						  , i_exception
 						  );
 			  }
+		  }
+	}
+
+	/**Checks, that class name ends with i_suffix:
+	 * @param i_exception TODO*/
+	private static void _checkClassnameSuffix(final Class<? extends Exception> i_exceptionClass, final Exception i_exception, final String i_suffix) {
+	      final String exceptionClassName = i_exceptionClass.getName();
+		if(!exceptionClassName.endsWith(i_suffix)){
+			throw new IllegalArgumentException(
+					"The name of subclass " + exceptionClassName + " of " + i_suffix + " should end in " + i_suffix + "!"
+					, i_exception);
 		  }
 	}
 
@@ -707,14 +705,14 @@ public class Util {
     private static CauseGetter _causeGetter = new ReflectionCauseGetter();
 
     /**The version number of the Java Runtime Environment, on which we are running*/
-    private static final String  _jreVersion = System.getProperty("java.version");
+    private static final String  _jreVersion = System.getProperty("java.specification.version");
 
     /**The minimum version of the JRE, on which this MulTEx version can be used.*/
-    private static final String _minimumJreVersion = "1.4";
+    static final String buildJreVersion = "1.8";
 
-    /**Is true, if the JRE-version number is >= 1.4*/
-    private static final boolean _jreHasExceptionChaining
-    = _jreVersion.compareTo(_minimumJreVersion) >= 0;
+    private static final boolean _runsOnJreVersionOrLater(final String neededJreVersion) {
+        return _jreVersion.compareTo(neededJreVersion) >= 0;
+    }
 
     /**Returns the line separator for the actual platform.
       This is the line separator for the platform the Java virtual machine is
@@ -737,10 +735,41 @@ public class Util {
 
 
     static {
-        if(!Util._jreHasExceptionChaining){
-            throw new RuntimeException("This version of MulTEx needs a Java Runtime Environment >= " + _minimumJreVersion + ", but runs on " + Util._jreVersion);
-        }
+        checkRunsOnJreVersionOrLater(buildJreVersion);
     }
+
+	static void checkRunsOnJreVersionOrLater(final String neededJreVersion) {
+		if(!Util._runsOnJreVersionOrLater(neededJreVersion)){
+            throw new RuntimeException("This version of MulTEx needs a Java Runtime Environment >= " + neededJreVersion + ", but runs on " + Util._jreVersion);
+        }
+	}
+    
+    /** Compares the two version numbers in the format a.b.c with an arbitrary number of decimal numbers, separated by dots.
+     * @return the value {@code 0} if {@code version1} equals {@code version2};
+     *         a value less than {@code 0} if {@code version1} before {@code version2}; and
+     *         a value greater than {@code 0} if {@code version1} after {@code version2}
+     * @implNote Simplified from https://www.baeldung.com/java-comparing-versions
+    */
+    static int compareVersions(String version1, String version2) {
+        final Pattern separatorPattern = Pattern.compile("\\.");
+		final String[] version1Splits = separatorPattern.split(version1);
+        final String[] version2Splits = separatorPattern.split(version2);
+        final int maxLengthOfVersionSplits = Math.max(version1Splits.length, version2Splits.length);
+
+        for (int i = 0; i < maxLengthOfVersionSplits; i++){
+            final int v1 = versionSegment(version1Splits, i);
+            final int v2 = versionSegment(version2Splits, i);
+            final int compare = v1 - v2;
+            if (compare != 0) {
+                return compare;
+            }
+        }
+        return 0;
+    }
+
+	private static int versionSegment(final String[] versionSplits, int i) {
+		return i < versionSplits.length ? Integer.parseInt(versionSplits[i]) : 0;
+	}
 
 
 }//class

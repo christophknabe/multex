@@ -63,12 +63,12 @@ public class MultexUtilTest extends Assert {
     	final Class<MyNonstaticExc> myNonstaticExcClass = MyNonstaticExc.class;
     	try{
 			MultexUtil.create(myNonstaticExcClass, "arg1");
-    		fail("IllegalArgumentException expected");
-    	}catch(final IllegalArgumentException expected) {}
+    		fail("RuntimeException expected");
+    	}catch(final RuntimeException expected) {}
     	try{
     		MultexUtil.create(MyNonstaticFailure.class);
-    		fail("IllegalArgumentException expected");
-    	}catch(final IllegalArgumentException expected) {}    	
+    		fail("RuntimeException expected");
+    	}catch(final RuntimeException expected) {}    	
     }
     
     /**File {0} not found in directory {1}*/
