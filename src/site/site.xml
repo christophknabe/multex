@@ -14,7 +14,7 @@
     </menu>
 -->
     <menu name="Overview">
-      <item name="Usage Docs" href="https://github.com/christophknabe/multex/docs/"/>
+      <item name="User's Guide" href="https://github.com/christophknabe/multex/tree/main/docs/user-guide"/>
       <item name="Javadoc" href="apidocs/overview-summary.html"/>
       <item name="Version History" href="apidocs/multex/package-summary.html#versionHistory"/>
       <item name="Source Repository" href="https://github.com/christophknabe/multex/"/>

@@ -44,6 +44,7 @@ public class MultexAssert extends Assert {
 			final char expectedChar = i_expected.charAt(i);
 			final char actualChar   = i_actual.charAt(i);
 			if(expectedChar!=actualChar){
+				System.err.println("MultexAssert.assertIsStart failed. i_actual:\n" + i_actual);
 				fail("Expected start String is not completely contained in actual total String."
 					+ "\nCorrect common start part is <" + i_expected.substring(0,i) + ">"
 					+ "\nFirst difference occurs at index " + i 
