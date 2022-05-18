@@ -127,7 +127,7 @@ public class Util {
     }
     
     /** @since MulTEx 8.3 as of 2011-03-25 */
-    private static int _maxRecursionDepth = 10;
+    private static int _maxRecursionDepth = 20;
 
 	/** Returns the direct cause of i_throwable.
 	 * @param i_throwable The Throwable which may begin a chain of Throwables. 
@@ -705,14 +705,10 @@ public class Util {
     private static CauseGetter _causeGetter = new ReflectionCauseGetter();
 
     /**The version number of the Java Runtime Environment, on which we are running*/
-    private static final String  _jreVersion = System.getProperty("java.specification.version");
+    private static final String  _runningOnJreVersion = System.getProperty("java.specification.version");
 
     /**The minimum version of the JRE, on which this MulTEx version can be used.*/
-    static final String buildJreVersion = "1.8";
-
-    private static final boolean _runsOnJreVersionOrLater(final String neededJreVersion) {
-        return _jreVersion.compareTo(neededJreVersion) >= 0;
-    }
+    static final String builtOnJreVersion = "1.8";
 
     /**Returns the line separator for the actual platform.
       This is the line separator for the platform the Java virtual machine is
@@ -735,40 +731,59 @@ public class Util {
 
 
     static {
-        checkRunsOnJreVersionOrLater(buildJreVersion);
+        checkRunsOnJreVersionOrLater(builtOnJreVersion);
     }
 
 	static void checkRunsOnJreVersionOrLater(final String neededJreVersion) {
-		if(!Util._runsOnJreVersionOrLater(neededJreVersion)){
-            throw new RuntimeException("This version of MulTEx needs a Java Runtime Environment >= " + neededJreVersion + ", but runs on " + Util._jreVersion);
+		final DottedVersion runningOnJreDottedVersion = new DottedVersion(Util._runningOnJreVersion);
+		final DottedVersion neededJreDottedVersion = new DottedVersion(neededJreVersion);
+		if(runningOnJreDottedVersion.compareTo(neededJreDottedVersion) < 0){
+            throw new RuntimeException("This version of MulTEx needs a Java Runtime Environment >= " + neededJreVersion + ", but runs on " + Util._runningOnJreVersion);
         }
 	}
-    
-    /** Compares the two version numbers in the format a.b.c with an arbitrary number of decimal numbers, separated by dots.
-     * @return the value {@code 0} if {@code version1} equals {@code version2};
-     *         a value less than {@code 0} if {@code version1} before {@code version2}; and
-     *         a value greater than {@code 0} if {@code version1} after {@code version2}
-     * @implNote Simplified from https://www.baeldung.com/java-comparing-versions
-    */
-    static int compareVersions(String version1, String version2) {
-        final Pattern separatorPattern = Pattern.compile("\\.");
-		final String[] version1Splits = separatorPattern.split(version1);
-        final String[] version2Splits = separatorPattern.split(version2);
-        final int maxLengthOfVersionSplits = Math.max(version1Splits.length, version2Splits.length);
 
-        for (int i = 0; i < maxLengthOfVersionSplits; i++){
-            final int v1 = versionSegment(version1Splits, i);
-            final int v2 = versionSegment(version2Splits, i);
-            final int compare = v1 - v2;
-            if (compare != 0) {
-                return compare;
-            }
-        }
-        return 0;
-    }
+	/** Comparator for dotted version strings.
+	 * @implNote Refactored from https://www.baeldung.com/java-comparing-versions
+	*/
+	static class DottedVersion implements Comparable<DottedVersion> {
 
-	private static int versionSegment(final String[] versionSplits, int i) {
-		return i < versionSplits.length ? Integer.parseInt(versionSplits[i]) : 0;
+		private static final Pattern separatorPattern = Pattern.compile("\\.");
+
+		private final String[] versionElements;
+
+		public static int EQUAL = 0;
+
+		/** Accepts a version number string in the format a.b.c with an arbitrary number of decimal numbers, separated by dots.*/
+		public DottedVersion(final String versionString) {
+			this.versionElements = separatorPattern.split(versionString);
+		}
+
+		int maxCountOfVersionElements(final DottedVersion that) {
+			return Math.max(this.versionElements.length, that.versionElements.length);
+		}
+
+	    /** Compares the two version numbers in the format a.b.c with an arbitrary number of decimal numbers, separated by dots.
+	     * @return the value {@code 0} if {@code version1} equals {@code version2};
+	     *         a value less than {@code 0} if {@code version1} before {@code version2}; and
+	     *         a value greater than {@code 0} if {@code version1} after {@code version2}
+	     * @implNote Refactored from https://www.baeldung.com/java-comparing-versions
+	    */
+		@Override
+		public int compareTo(final DottedVersion that) {
+	        final int maxCountOfVersionElements = this.maxCountOfVersionElements(that);	
+	        for (int i = 0; i < maxCountOfVersionElements; i++){
+	            final int result = this.segmentValue(i) - that.segmentValue(i);
+	            if (result != EQUAL) { //first difference met.
+	                return result;
+	            }
+	        }
+	        return EQUAL; //no difference
+	    }
+
+		int segmentValue(int index) {
+			return index < versionElements.length ? Integer.parseInt(versionElements[index]) : 0;
+		}
+
 	}
 
 

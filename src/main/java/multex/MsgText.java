@@ -67,6 +67,8 @@ public  static final String causeMarkerKey = _className + ".causeMarker";
   MultexException will be taken directly from the exception object itself.
 
   @since MulTEx 1c
+
+  @deprecated as it uses static variables, see https://devdreamz.com/question/531178-why-are-static-variables-considered-evil
 */
 public static synchronized void setInternationalization(final boolean i_internationalization){
     _internationalization = i_internationalization;
@@ -91,6 +93,8 @@ public static synchronized void setInternationalization(final boolean i_internat
   @since MulTEx 4
 
   @see #setInternationalization(boolean)
+
+  @deprecated as it uses static variables, see https://devdreamz.com/question/531178-why-are-static-variables-considered-evil
 */
 public static synchronized void setInternationalization(final ResourceBundle i_resourceBundle)
 throws IllegalArgumentException

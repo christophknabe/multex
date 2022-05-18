@@ -53,6 +53,10 @@ The plans are ordered by priority (most important as No. 1)
 <a name="versionHistory"></a>
 <H2>Version history</H2><UL>
 
+  <li>8.5.1 of 2022-05-18: Minor rework: Deprecate static variables in class MsgText,
+    Increase default maxRecursionDepth in exception chaining to 20,
+    Extracted Java runtime version checking to class Util.DottedVersion.
+  </li>
   <li>8.5 of 2022-05-11: Disallows creation of a non-static inner class as subclass of
     {@link multex.Exc} or {@link multex.Failure}. This avoids passing an outer this-reference
     as part of the exception.  

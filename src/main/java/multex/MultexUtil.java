@@ -1,6 +1,5 @@
 package multex;
 
-import java.lang.reflect.Modifier;
 import java.util.Arrays;
 
 /**This class contains static API methods, which can be used nearly as keywords.

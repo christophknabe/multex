@@ -7,6 +7,7 @@ import java.io.StringReader;
 import org.junit.Test;
 import org.xml.sax.SAXException;
 
+import multex.Util.DottedVersion;
 import multex.test.MultexAssert;
 
 
@@ -15,7 +16,7 @@ public class UtilTest extends MultexAssert {
 
 
     //Testfixtures:
-    private static final int _baseLineNumber = 18; //Must be the same as the line it stands on!!!
+    private static final int _baseLineNumber = 19; //Must be the same as the line it stands on!!!
 	private final Exc       t1  = new Exc("Kategorie nicht erlaubt");      //Leave at this line!
 	private final Throwable t21 = new FileNotFoundException("kasse.dat");  //Leave at line 22
 	private final Failure t2    = new Failure("Ziel nicht gefunden", t21); //Leave at line 23
@@ -254,7 +255,11 @@ public class UtilTest extends MultexAssert {
     }
     
     @Test public void checkRunsOnJreVersionOrLater() {
-    	Util.checkRunsOnJreVersionOrLater(Util.buildJreVersion);
+    	Util.checkRunsOnJreVersionOrLater(Util.builtOnJreVersion);
+    	try {
+    		Util.checkRunsOnJreVersionOrLater(Util.builtOnJreVersion + ".1");
+    		fail("RuntimeException expected");
+    	}catch(RuntimeException expected) {}
     	try {
     		Util.checkRunsOnJreVersionOrLater("9");
     		fail("RuntimeException expected");
@@ -265,20 +270,26 @@ public class UtilTest extends MultexAssert {
     	}catch(RuntimeException expected) {}
     }
     
-    @Test public void compareVersions() {
+    @Test public void dottedVersion_compareTo() {
 		//Test examples taken from https://www.baeldung.com/java-comparing-versions
     	{
-			final int result = Util.compareVersions("1.0.1", "1.1.2");
+			final int result = compareVersions("1.0.1", "1.1.2");
 			assertTrue(Integer.toString(result), result < 0);
 		}
-		assertTrue(Util.compareVersions("1.0.1", "1.10") < 0);
-        assertTrue(Util.compareVersions("1.1.2", "1.0.1") > 0);
-        assertTrue(Util.compareVersions("1.1.2", "1.2.0") < 0);
-        assertEquals(0, Util.compareVersions("1.3.0", "1.3"));
+		assertTrue(compareVersions("1.0.1", "1.10") < 0);
+        assertTrue(compareVersions("1.1.2", "1.0.1") > 0);
+        assertTrue(compareVersions("1.1.2", "1.2.0") < 0);
+        assertEquals(0, compareVersions("1.3.0", "1.3"));
         //Own Java version examples
-    	assertTrue(Util.compareVersions("1.8", "10") < 0);
-    	assertTrue(Util.compareVersions("10", "10.1") < 0);      
+    	assertTrue(compareVersions("1.8", "10") < 0);
+    	assertTrue(compareVersions("10", "10.1") < 0);
     }
+
+	private static int compareVersions(String version1, String version2) {
+		final DottedVersion dottedVersion1 = new DottedVersion(version1);
+		final DottedVersion dottedVersion2 = new DottedVersion(version2);
+		return dottedVersion1.compareTo(dottedVersion2);
+	}
 
     private StackTraceElement[] stripFirstThreeElements(final StackTraceElement[] trace) {
         final StackTraceElement[] result = new StackTraceElement[trace.length-3];
